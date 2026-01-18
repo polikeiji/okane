@@ -1,50 +1,207 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+SYNC IMPACT REPORT
+===================
+Version Change: Template → 1.0.0 (Initial version)
+Modified Principles:
+  - Created multi-language constitution structure
+  - Established language-agnostic core principles
+  - Added language-specific constitution references
+
+Added Sections:
+  - Language-Specific Constitutions
+  - Test-Driven Development
+  - Observability
+  - Versioning & Breaking Changes
+  - Simplicity & YAGNI
+
+Templates Status:
+  ✅ plan-template.md - Reviewed, constitution check section aligns
+  ✅ spec-template.md - Reviewed, requirements and testing align
+  ✅ tasks-template.md - Reviewed, task organization aligns
+
+Follow-up TODOs:
+  - None - all placeholders filled
+-->
+
+# Okane Project Constitution
+
+**Version**: 1.0.0 | **Ratified**: 2026-01-18 | **Last Amended**: 2026-01-18
+
+This constitution defines the mandatory principles and practices for the Okane project across all programming languages and technologies.
+
+## Language-Specific Constitutions
+
+This constitution contains **language-agnostic** principles that apply to all code in the Okane project. Language-specific requirements are defined in separate constitution documents:
+
+- **Python**: `.specify/memory/constitutions/python.md` - Covers argparse, uv, ruff, and Python-specific practices
+- **Bicep**: `.specify/memory/constitutions/bicep.md` - Placeholder for infrastructure as code practices
+
+All language-specific constitutions are subordinate to and MUST NOT contradict this main constitution. When developing in a specific language, developers MUST comply with both this document and the relevant language-specific constitution.
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Test-Driven Development (NON-NEGOTIABLE)
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+**Test-Driven Development (TDD) is mandatory for all feature development.**
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+- Tests MUST be written before implementation code
+- Follow the Red-Green-Refactor cycle strictly:
+  1. **Red**: Write a failing test that defines desired functionality
+  2. **Green**: Write minimal code to make the test pass
+  3. **Refactor**: Improve code quality while keeping tests passing
+- All tests MUST fail initially before implementation begins
+- Tests MUST be reviewed and approved before implementation starts
+- No implementation code without corresponding tests
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**Rationale**: TDD ensures code correctness, provides living documentation, enables confident refactoring, and drives better design through testability requirements.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### II. Integration Testing
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Integration tests are required for critical interaction points.**
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Integration tests MUST cover:
+  - New library/module contracts
+  - Changes to existing contracts or interfaces
+  - Inter-service or inter-module communication
+  - Shared data schemas and formats
+- Integration tests verify components work together correctly
+- Mock external dependencies only when necessary (prefer real dependencies in integration tests)
+- Document integration test scenarios and expected behaviors
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**Rationale**: Unit tests verify individual components, but integration tests catch issues in how components interact, preventing integration failures in production.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### III. Observability
+
+**All code MUST be observable and debuggable.**
+
+- Implement structured logging with appropriate log levels
+- Log meaningful context (request IDs, user IDs, operation names)
+- Use text-based I/O protocols where possible for debuggability:
+  - Input from stdin/arguments → Output to stdout
+  - Errors to stderr
+- Support both JSON and human-readable output formats
+- Include timing and performance metrics for critical operations
+- Instrument error paths with detailed context
+
+**Rationale**: Observable systems are debuggable systems. Text-based protocols and structured logging enable effective troubleshooting in development and production.
+
+### IV. Versioning & Breaking Changes
+
+**All public interfaces MUST follow semantic versioning.**
+
+- Use MAJOR.MINOR.PATCH versioning format:
+  - **MAJOR**: Incompatible API changes
+  - **MINOR**: Backward-compatible functionality additions
+  - **PATCH**: Backward-compatible bug fixes
+- Document all breaking changes clearly
+- Provide migration guides for major version bumps
+- Deprecate features before removal when possible
+- Maintain backward compatibility within major versions
+
+**Rationale**: Semantic versioning provides clear expectations about compatibility and enables users to make informed upgrade decisions.
+
+### V. Simplicity & YAGNI
+
+**Start simple and avoid premature complexity.**
+
+- Follow the YAGNI principle (You Aren't Gonna Need It)
+- Implement only what is currently needed
+- Avoid speculative generalization or abstraction
+- Add complexity only when justified by real requirements
+- Document and justify any complexity introduced
+- Prefer simple, obvious solutions over clever ones
+
+**Rationale**: Simple code is easier to understand, test, maintain, and change. Premature complexity creates maintenance burden without proven benefit.
+
+### VI. Documentation
+
+**Code and features MUST be adequately documented.**
+
+- Maintain up-to-date README files with:
+  - Project purpose and goals
+  - Installation instructions
+  - Basic usage examples
+  - Links to detailed documentation
+- Document public APIs, interfaces, and contracts
+- Include inline comments for non-obvious logic
+- Maintain design documentation for significant features
+- Keep documentation close to code (prefer in-repo docs)
+
+**Rationale**: Good documentation reduces onboarding time, prevents misuse, and captures design decisions for future reference.
+
+### VII. Security
+
+**Security is a mandatory consideration at all stages.**
+
+- Follow secure coding practices for the language/framework
+- Validate and sanitize all external input
+- Use parameterized queries for database operations
+- Implement proper authentication and authorization
+- Log security-relevant events
+- Keep dependencies updated for security patches
+- Review security implications during code review
+- Document security considerations and threat models
+
+**Rationale**: Security vulnerabilities can have severe consequences. Prevention through secure development practices is more effective than remediation.
+
+## Development Workflow
+
+### Code Review Requirements
+
+All code changes MUST undergo code review before merging:
+
+- At least one approving review required
+- Reviewers MUST verify:
+  - Compliance with this constitution and language-specific constitutions
+  - Test coverage and quality
+  - Security considerations
+  - Documentation completeness
+  - Code clarity and maintainability
+- Address review feedback before merging
+
+### Quality Gates
+
+Before merging, code MUST pass:
+
+- All automated tests (unit, integration, contract)
+- Linting and formatting checks
+- Security scanning (if applicable)
+- Code review approval
+- Constitution compliance verification
+
+### Complexity Justification
+
+Any complexity that violates simplicity principles MUST be justified:
+
+- Document why the complexity is necessary
+- Explain why simpler alternatives were rejected
+- Track as technical debt if temporary
+- Include mitigation plan if possible
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes all other development practices and guidelines within the Okane project.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Amendments**: Changes to this constitution require:
+
+1. Documentation of rationale and impact assessment
+2. Review and approval from project maintainers
+3. Migration plan for any breaking changes
+4. Version bump following semantic versioning:
+   - **MAJOR**: Backward-incompatible principle changes or removals
+   - **MINOR**: New principles or significant guidance additions
+   - **PATCH**: Clarifications, wording improvements, or non-semantic refinements
+
+**Compliance**: All pull requests and code reviews MUST verify compliance with this constitution and applicable language-specific constitutions.
+
+**Exceptions**: Any exceptions to these principles must be:
+
+- Explicitly documented with justification
+- Reviewed and approved by maintainers
+- Tracked and revisited periodically
+
+**Related Documents**:
+
+- Language-specific constitutions in `.specify/memory/constitutions/`
+- Template files in `.specify/templates/`
+- Project documentation in repository root
