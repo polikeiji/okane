@@ -1,23 +1,22 @@
 <!--
 SYNC IMPACT REPORT
 ===================
-Version Change: Template → 1.0.0 (Initial version)
+Version Change: 1.0.0 → 1.1.0 (MINOR: New development workflow principles added)
+
 Modified Principles:
-  - Created multi-language constitution structure
-  - Established language-agnostic core principles
-  - Added language-specific constitution references
+  - Enhanced Development Workflow section with PR and commit organization requirements
 
 Added Sections:
-  - Language-Specific Constitutions
-  - Test-Driven Development
-  - Observability
-  - Versioning & Breaking Changes
-  - Simplicity & YAGNI
+  - Pull Request Workflow subsection under Development Workflow
+  - Branch Management and Commit Organization requirements
+
+Removed Sections:
+  - None
 
 Templates Status:
-  ✅ plan-template.md - Reviewed, constitution check section aligns
-  ✅ spec-template.md - Reviewed, requirements and testing align
-  ✅ tasks-template.md - Reviewed, task organization aligns
+  ✅ plan-template.md - Reviewed, no changes needed (focuses on feature planning)
+  ✅ spec-template.md - Reviewed, no changes needed (focuses on requirements)
+  ✅ tasks-template.md - Reviewed, no changes needed (focuses on task organization)
 
 Follow-up TODOs:
   - None - all placeholders filled
@@ -25,7 +24,7 @@ Follow-up TODOs:
 
 # Okane Project Constitution
 
-**Version**: 1.0.0 | **Ratified**: 2026-01-18 | **Last Amended**: 2026-01-18
+**Version**: 1.1.0 | **Ratified**: 2026-01-18 | **Last Amended**: 2026-01-18
 
 This constitution defines the mandatory principles and practices for the Okane project across all programming languages and technologies.
 
@@ -146,6 +145,25 @@ All language-specific constitutions are subordinate to and MUST NOT contradict t
 
 ## Development Workflow
 
+### Pull Request Workflow
+
+All code changes MUST follow proper pull request workflow:
+
+- Developers MUST organize commits in their working branch logically and clearly before creating a PR:
+  - Use meaningful commit messages that explain the "why" not just the "what"
+  - Group related changes into cohesive commits
+  - Avoid mixing unrelated changes in a single commit
+  - Squash or reorder commits to create a clean, reviewable history
+  - Each commit should represent a logical unit of work
+- PRs MUST be rebased to the main branch when PRs are approved:
+  - Resolve any merge conflicts locally in the feature branch
+  - Rebase onto the latest main branch before merging
+  - Ensure all tests pass after rebasing
+  - No merge commits in the main branch history
+  - Fast-forward merges preferred to maintain linear history
+
+**Rationale**: Clean commit history improves code review quality, makes debugging easier through `git bisect`, simplifies rollbacks, and provides clear documentation of changes. Rebasing ensures a linear history that is easier to understand and navigate.
+
 ### Code Review Requirements
 
 All code changes MUST undergo code review before merging:
@@ -157,6 +175,7 @@ All code changes MUST undergo code review before merging:
   - Security considerations
   - Documentation completeness
   - Code clarity and maintainability
+  - Commit organization and history quality
 - Address review feedback before merging
 
 ### Quality Gates
