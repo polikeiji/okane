@@ -22,14 +22,14 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project directory structure: src/okane/{cli,models,services,lib}, tests/{contract,integration,unit}, config/
-- [ ] T002 Initialize Python project with pyproject.toml including Python 3.11+, uv package manager config, and project metadata
-- [ ] T003 [P] Add production dependencies to pyproject.toml: httpx>=0.27.0, beautifulsoup4>=4.12.0, openai>=1.0.0, azure-storage-file-datalake>=12.0.0, pypdf>=4.0.0, pydantic>=2.0.0
-- [ ] T004 [P] Add development dependencies to pyproject.toml: pytest>=8.0.0, pytest-asyncio>=0.23.0, pytest-mock>=3.12.0, ruff>=0.1.0, mypy>=1.8.0, vcrpy>=6.0.0
-- [ ] T005 [P] Configure ruff linting and formatting in pyproject.toml following Python constitution
-- [ ] T006 [P] Configure mypy type checking in pyproject.toml with strict mode enabled
-- [ ] T007 Create src/okane/__init__.py with package version and exports
-- [ ] T008 Create README.md with project overview, installation instructions, and basic usage from quickstart.md
+- [X] T001 Create project directory structure: src/okane/{cli,models,services,lib}, tests/{contract,integration,unit}, config/
+- [X] T002 Initialize Python project with pyproject.toml including Python 3.11+, uv package manager config, and project metadata
+- [X] T003 [P] Add production dependencies to pyproject.toml: httpx>=0.27.0, beautifulsoup4>=4.12.0, openai>=1.0.0, azure-storage-file-datalake>=12.0.0, pypdf>=4.0.0, pydantic>=2.0.0
+- [X] T004 [P] Add development dependencies to pyproject.toml: pytest>=8.0.0, pytest-asyncio>=0.23.0, pytest-mock>=3.12.0, ruff>=0.1.0, mypy>=1.8.0, vcrpy>=6.0.0
+- [X] T005 [P] Configure ruff linting and formatting in pyproject.toml following Python constitution
+- [X] T006 [P] Configure mypy type checking in pyproject.toml with strict mode enabled
+- [X] T007 Create src/okane/__init__.py with package version and exports
+- [X] T008 Create README.md with project overview, installation instructions, and basic usage from quickstart.md
 
 ---
 
@@ -39,22 +39,22 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T009 Create src/okane/models/__init__.py with all model exports
-- [ ] T010 [P] Implement WebsiteConfiguration model in src/okane/models/config.py with Pydantic validation (id, name, base_url, description, enabled fields)
-- [ ] T011 [P] Implement WebsiteConfigurationList model in src/okane/models/config.py with version and websites fields, unique ID validation
-- [ ] T012 [P] Implement ScrapingStrategy model in src/okane/models/website.py with strategy_type, pdf_link_selectors, confidence fields and validation
-- [ ] T013 [P] Implement DownloadedPDF model in src/okane/models/metadata.py with all FR-011 fields (file_id, original_url, sha256_hash, etc.)
-- [ ] T014 [P] Implement CrawlMetadata model in src/okane/models/metadata.py with crawl tracking fields (crawl_id, timestamps, counters, downloaded_files)
-- [ ] T015 Create src/okane/lib/__init__.py with library exports
-- [ ] T016 [P] Implement URL validation and sanitization utilities in src/okane/lib/url_utils.py (validate HTTP/HTTPS URLs, sanitize filenames)
-- [ ] T017 [P] Implement PDF validation utilities in src/okane/lib/pdf_utils.py using pypdf (validate PDF structure, extract metadata)
-- [ ] T018 Create src/okane/services/__init__.py with service exports
-- [ ] T019 Implement StorageBackend abstract base class in src/okane/services/storage.py with write_file, read_file, exists methods
-- [ ] T020 [P] Implement LocalStorageBackend in src/okane/services/storage.py for local filesystem operations with atomic writes
-- [ ] T021 Create config/default_websites.json with JSON structure from data-model.md containing national government sites (MIAC, National Diet Library)
-- [ ] T022 Add 47 Japanese prefectural political finance disclosure sites to config/default_websites.json following WebsiteConfigurationList schema
-- [ ] T023 Implement logging configuration in src/okane/lib/logging_config.py supporting both text and JSON formats with proper log levels
-- [ ] T024 Create src/okane/cli/__init__.py with CLI exports
+- [X] T009 Create src/okane/models/__init__.py with all model exports
+- [X] T010 [P] Implement WebsiteConfiguration model in src/okane/models/config.py with Pydantic validation (id, name, base_url, description, enabled fields)
+- [X] T011 [P] Implement WebsiteConfigurationList model in src/okane/models/config.py with version and websites fields, unique ID validation
+- [X] T012 [P] Implement ScrapingStrategy model in src/okane/models/website.py with strategy_type, pdf_link_selectors, confidence fields and validation
+- [X] T013 [P] Implement DownloadedPDF model in src/okane/models/metadata.py with all FR-011 fields (file_id, original_url, sha256_hash, etc.)
+- [X] T014 [P] Implement CrawlMetadata model in src/okane/models/metadata.py with crawl tracking fields (crawl_id, timestamps, counters, downloaded_files)
+- [X] T015 Create src/okane/lib/__init__.py with library exports
+- [X] T016 [P] Implement URL validation and sanitization utilities in src/okane/lib/url_utils.py (validate HTTP/HTTPS URLs, sanitize filenames)
+- [X] T017 [P] Implement PDF validation utilities in src/okane/lib/pdf_utils.py using pypdf (validate PDF structure, extract metadata)
+- [X] T018 Create src/okane/services/__init__.py with service exports
+- [X] T019 Implement StorageBackend abstract base class in src/okane/services/storage.py with write_file, read_file, exists methods
+- [X] T020 [P] Implement LocalStorageBackend in src/okane/services/storage.py for local filesystem operations with atomic writes
+- [X] T021 Create config/default_websites.json with JSON structure from data-model.md containing national government sites (MIAC, National Diet Library)
+- [X] T022 Add 47 Japanese prefectural political finance disclosure sites to config/default_websites.json following WebsiteConfigurationList schema
+- [X] T023 Implement logging configuration in src/okane/lib/logging_config.py supporting both text and JSON formats with proper log levels
+- [X] T024 Create src/okane/cli/__init__.py with CLI exports
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -68,22 +68,22 @@
 
 ### Implementation for User Story 1
 
-- [ ] T025 [P] [US1] Implement AI analyzer in src/okane/lib/ai_analyzer.py with OpenAI API integration to analyze HTML and return ScrapingStrategy
-- [ ] T026 [P] [US1] Implement robots.txt parser in src/okane/lib/url_utils.py using urllib.robotparser to check URL crawling permissions
-- [ ] T027 [US1] Implement website scraper service in src/okane/services/scraper.py that uses AI analyzer to determine scraping strategy and extract PDF URLs
-- [ ] T028 [US1] Implement PDF downloader service in src/okane/services/downloader.py with httpx to download files, calculate SHA-256 hash, validate PDFs
-- [ ] T029 [US1] Implement core crawler orchestrator in src/okane/services/crawler.py that coordinates scraper, downloader, storage for single website (sequential)
-- [ ] T030 [US1] Implement metadata tracking in src/okane/services/crawler.py to update CrawlMetadata with downloaded files and errors using atomic writes
-- [ ] T031 [US1] Implement CLI main entry point in src/okane/cli/main.py with argparse, global options (--version, --help, --verbose, --quiet)
-- [ ] T032 [US1] Implement crawl subcommand in src/okane/cli/crawl.py with --output-folder required argument and default config loading
-- [ ] T033 [US1] Add config validation in src/okane/cli/crawl.py to load and validate configuration JSON using WebsiteConfigurationList model
-- [ ] T034 [US1] Add output folder validation in src/okane/cli/crawl.py to check folder is writable before starting crawl
-- [ ] T035 [US1] Implement OpenAI API key validation in src/okane/cli/crawl.py checking OPENAI_API_KEY environment variable
-- [ ] T036 [US1] Add progress logging in src/okane/cli/crawl.py showing current website being crawled and PDFs discovered/downloaded
-- [ ] T037 [US1] Add summary output in src/okane/cli/crawl.py showing websites crawled, PDFs downloaded, total size, errors (text format)
-- [ ] T038 [US1] Implement error handling in src/okane/services/crawler.py for network failures, invalid PDFs with graceful continuation
-- [ ] T039 [US1] Implement exit code logic in src/okane/cli/crawl.py (0=success, 1=partial, 2=failure, 3=invalid args, 4=auth error, 5=permission error)
-- [ ] T040 [US1] Add polite crawling delays in src/okane/services/scraper.py (1-2 second delay between requests per research.md)
+- [X] T025 [P] [US1] Implement AI analyzer in src/okane/lib/ai_analyzer.py with OpenAI API integration to analyze HTML and return ScrapingStrategy
+- [X] T026 [P] [US1] Implement robots.txt parser in src/okane/lib/url_utils.py using urllib.robotparser to check URL crawling permissions
+- [X] T027 [US1] Implement website scraper service in src/okane/services/scraper.py that uses AI analyzer to determine scraping strategy and extract PDF URLs
+- [X] T028 [US1] Implement PDF downloader service in src/okane/services/downloader.py with httpx to download files, calculate SHA-256 hash, validate PDFs
+- [X] T029 [US1] Implement core crawler orchestrator in src/okane/services/crawler.py that coordinates scraper, downloader, storage for single website (sequential)
+- [X] T030 [US1] Implement metadata tracking in src/okane/services/crawler.py to update CrawlMetadata with downloaded files and errors using atomic writes
+- [X] T031 [US1] Implement CLI main entry point in src/okane/cli/main.py with argparse, global options (--version, --help, --verbose, --quiet)
+- [X] T032 [US1] Implement crawl subcommand in src/okane/cli/crawl.py with --output-folder required argument and default config loading
+- [X] T033 [US1] Add config validation in src/okane/cli/crawl.py to load and validate configuration JSON using WebsiteConfigurationList model
+- [X] T034 [US1] Add output folder validation in src/okane/cli/crawl.py to check folder is writable before starting crawl
+- [X] T035 [US1] Implement OpenAI API key validation in src/okane/cli/crawl.py checking OPENAI_API_KEY environment variable
+- [X] T036 [US1] Add progress logging in src/okane/cli/crawl.py showing current website being crawled and PDFs discovered/downloaded
+- [X] T037 [US1] Add summary output in src/okane/cli/crawl.py showing websites crawled, PDFs downloaded, total size, errors (text format)
+- [X] T038 [US1] Implement error handling in src/okane/services/crawler.py for network failures, invalid PDFs with graceful continuation
+- [X] T039 [US1] Implement exit code logic in src/okane/cli/crawl.py (0=success, 1=partial, 2=failure, 3=invalid args, 4=auth error, 5=permission error)
+- [X] T040 [US1] Add polite crawling delays in src/okane/services/scraper.py (1-2 second delay between requests per research.md)
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently with `okane crawl --output-folder ./output`
 
@@ -97,12 +97,12 @@
 
 ### Implementation for User Story 2
 
-- [ ] T041 [US2] Add --config/-c CLI argument in src/okane/cli/crawl.py to accept custom configuration file path
-- [ ] T042 [US2] Implement custom config loading in src/okane/cli/crawl.py that loads JSON file and validates with WebsiteConfigurationList model
-- [ ] T043 [US2] Add JSON schema validation error handling in src/okane/cli/crawl.py with clear error messages for invalid configuration format
-- [ ] T044 [US2] Add URL validation in config loading to detect and report invalid URLs in configuration with specific error messages per site
-- [ ] T045 [US2] Update crawler logic in src/okane/services/crawler.py to handle mix of valid and invalid URLs, logging errors without stopping crawl
-- [ ] T046 [US2] Update summary output in src/okane/cli/crawl.py to indicate whether default or custom configuration was used
+- [X] T041 [US2] Add --config/-c CLI argument in src/okane/cli/crawl.py to accept custom configuration file path
+- [X] T042 [US2] Implement custom config loading in src/okane/cli/crawl.py that loads JSON file and validates with WebsiteConfigurationList model
+- [X] T043 [US2] Add JSON schema validation error handling in src/okane/cli/crawl.py with clear error messages for invalid configuration format
+- [X] T044 [US2] Add URL validation in config loading to detect and report invalid URLs in configuration with specific error messages per site
+- [X] T045 [US2] Update crawler logic in src/okane/services/crawler.py to handle mix of valid and invalid URLs, logging errors without stopping crawl
+- [X] T046 [US2] Update summary output in src/okane/cli/crawl.py to indicate whether default or custom configuration was used
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently - default config and custom config
 
@@ -116,13 +116,13 @@
 
 ### Implementation for User Story 3
 
-- [ ] T047 [US3] Add --parallelism/-p CLI argument in src/okane/cli/crawl.py accepting positive integer with default value of 1
-- [ ] T048 [US3] Validate parallelism argument in src/okane/cli/crawl.py (must be positive integer, reject invalid values with exit code 3)
-- [ ] T049 [US3] Implement parallel crawler in src/okane/services/crawler.py using concurrent.futures.ThreadPoolExecutor for website-level parallelism
-- [ ] T050 [US3] Add thread-safe metadata updates in src/okane/services/crawler.py using locks to prevent concurrent write conflicts
-- [ ] T051 [US3] Update progress logging in src/okane/cli/crawl.py to show parallel website crawling status (e.g., "[1,3,5/10] Crawling...")
-- [ ] T052 [US3] Add error isolation in src/okane/services/crawler.py to ensure one website error doesn't affect parallel tasks
-- [ ] T053 [US3] Update summary output in src/okane/cli/crawl.py to show parallelism level used
+- [X] T047 [US3] Add --parallelism/-p CLI argument in src/okane/cli/crawl.py accepting positive integer with default value of 1
+- [X] T048 [US3] Validate parallelism argument in src/okane/cli/crawl.py (must be positive integer, reject invalid values with exit code 3)
+- [X] T049 [US3] Implement parallel crawler in src/okane/services/crawler.py using concurrent.futures.ThreadPoolExecutor for website-level parallelism
+- [X] T050 [US3] Add thread-safe metadata updates in src/okane/services/crawler.py using locks to prevent concurrent write conflicts
+- [X] T051 [US3] Update progress logging in src/okane/cli/crawl.py to show parallel website crawling status (e.g., "[1,3,5/10] Crawling...")
+- [X] T052 [US3] Add error isolation in src/okane/services/crawler.py to ensure one website error doesn't affect parallel tasks
+- [X] T053 [US3] Update summary output in src/okane/cli/crawl.py to show parallelism level used
 
 **Checkpoint**: All user stories 1-3 should now be independently functional - basic, custom config, and parallel modes
 
@@ -136,13 +136,13 @@
 
 ### Implementation for User Story 4
 
-- [ ] T054 [US4] Add --max-files/-m CLI argument in src/okane/cli/crawl.py accepting optional positive integer (default: None for unlimited)
-- [ ] T055 [US4] Validate max-files argument in src/okane/cli/crawl.py (must be positive if provided, reject 0 or negative)
-- [ ] T056 [US4] Implement global file counter in src/okane/services/crawler.py to track total files downloaded across all websites
-- [ ] T057 [US4] Add max-files check in src/okane/services/downloader.py before each download, stop if limit reached
-- [ ] T058 [US4] Add "limit reached" logging in src/okane/services/crawler.py when max-files limit is hit
-- [ ] T059 [US4] Update metadata in src/okane/models/metadata.py to include max_files_limit field in CrawlMetadata
-- [ ] T060 [US4] Update summary output in src/okane/cli/crawl.py to indicate if max-files limit was applied and reached
+- [X] T054 [US4] Add --max-files/-m CLI argument in src/okane/cli/crawl.py accepting optional positive integer (default: None for unlimited)
+- [X] T055 [US4] Validate max-files argument in src/okane/cli/crawl.py (must be positive if provided, reject 0 or negative)
+- [X] T056 [US4] Implement global file counter in src/okane/services/crawler.py to track total files downloaded across all websites
+- [X] T057 [US4] Add max-files check in src/okane/services/downloader.py before each download, stop if limit reached
+- [X] T058 [US4] Add "limit reached" logging in src/okane/services/crawler.py when max-files limit is hit
+- [X] T059 [US4] Update metadata in src/okane/models/metadata.py to include max_files_limit field in CrawlMetadata
+- [X] T060 [US4] Update summary output in src/okane/cli/crawl.py to indicate if max-files limit was applied and reached
 
 **Checkpoint**: User stories 1-4 all work independently - basic, custom config, parallel, and file limits
 
@@ -156,15 +156,15 @@
 
 ### Implementation for User Story 5
 
-- [ ] T061 [US5] Implement ADLSStorageBackend in src/okane/services/storage.py using azure-storage-file-datalake SDK
-- [ ] T062 [US5] Add Azure credential loading in src/okane/services/storage.py from environment variables (AZURE_STORAGE_ACCOUNT_NAME, AZURE_STORAGE_ACCOUNT_KEY)
-- [ ] T063 [US5] Add ADLS Gen2 path detection in src/okane/cli/crawl.py (check for abfss:// scheme in output-folder)
-- [ ] T064 [US5] Implement storage backend selection in src/okane/cli/crawl.py based on output folder path (local vs ADLS)
-- [ ] T065 [US5] Add Azure authentication validation in src/okane/cli/crawl.py before starting crawl (check credentials early, exit code 4 if invalid)
-- [ ] T066 [US5] Implement retry logic in src/okane/services/storage.py for Azure upload failures with exponential backoff
-- [ ] T067 [US5] Add network interruption handling in src/okane/services/storage.py to retry uploads and log permanent failures in metadata
-- [ ] T068 [US5] Update metadata to track storage backend type in src/okane/models/metadata.py (storage_backend field: "local" or "adls")
-- [ ] T069 [US5] Update summary output in src/okane/cli/crawl.py to indicate storage backend used (local or Azure)
+- [X] T061 [US5] Implement ADLSStorageBackend in src/okane/services/storage.py using azure-storage-file-datalake SDK
+- [X] T062 [US5] Add Azure credential loading in src/okane/services/storage.py from environment variables (AZURE_STORAGE_ACCOUNT_NAME, AZURE_STORAGE_ACCOUNT_KEY)
+- [X] T063 [US5] Add ADLS Gen2 path detection in src/okane/cli/crawl.py (check for abfss:// scheme in output-folder)
+- [X] T064 [US5] Implement storage backend selection in src/okane/cli/crawl.py based on output folder path (local vs ADLS)
+- [X] T065 [US5] Add Azure authentication validation in src/okane/cli/crawl.py before starting crawl (check credentials early, exit code 4 if invalid)
+- [X] T066 [US5] Implement retry logic in src/okane/services/storage.py for Azure upload failures with exponential backoff
+- [X] T067 [US5] Add network interruption handling in src/okane/services/storage.py to retry uploads and log permanent failures in metadata
+- [X] T068 [US5] Update metadata to track storage backend type in src/okane/models/metadata.py (storage_backend field: "local" or "adls")
+- [X] T069 [US5] Update summary output in src/okane/cli/crawl.py to indicate storage backend used (local or Azure)
 
 **Checkpoint**: All user stories 1-5 should now be independently functional - full feature set complete
 

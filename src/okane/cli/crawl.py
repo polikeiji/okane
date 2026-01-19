@@ -8,7 +8,7 @@ import sys
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from okane.lib.ai_analyzer import AIAnalyzer
 from okane.lib.logging_config import configure_logging
@@ -148,6 +148,10 @@ def handle_crawl(args: argparse.Namespace) -> int:
         # Create initial metadata
         crawl_id = str(uuid.uuid4())
         crawl_start_time = datetime.now(timezone.utc)
+        
+        # Determine storage backend type
+        storage_backend_type = "adls" if args.output_folder.startswith("abfss://") else "local"
+        
         metadata = crawler.create_metadata(
             crawl_id=crawl_id,
             crawl_start_time=crawl_start_time,
@@ -155,54 +159,75 @@ def handle_crawl(args: argparse.Namespace) -> int:
             parallelism=args.parallelism,
             max_files_limit=args.max_files,
             output_folder=args.output_folder,
-            storage_backend="local",  # TODO: detect from path
+            storage_backend=storage_backend_type,
             config_file_path=args.config or "default",
         )
 
-        # Crawl websites sequentially (parallelism will be added later)
+        # Crawl websites
         total_files_downloaded = 0
-        for idx, website in enumerate(config.websites, 1):
-            if not website.enabled:
-                continue
-
-            logger.info(f"[{idx}/{len(config.websites)}] Crawling: {website.name}")
-
-            # Calculate remaining files
-            max_files_remaining = None
-            if args.max_files:
-                max_files_remaining = args.max_files - total_files_downloaded
-                if max_files_remaining <= 0:
-                    logger.info("Reached max files limit")
-                    break
-
-            # Crawl website
-            if not args.dry_run:
-                downloaded_files, errors = crawler.crawl_website(website, max_files_remaining)
-
-                # Update metadata
+        
+        if args.parallelism > 1 and not args.dry_run:
+            # Parallel crawling
+            logger.info(f"Starting parallel crawl with {args.parallelism} workers...")
+            
+            results = crawler.crawl_websites_parallel(
+                config.websites, args.parallelism, args.max_files
+            )
+            
+            # Update metadata with all results
+            for idx, downloaded_files, errors in results:
                 metadata = crawler.update_metadata(
                     metadata, downloaded_files, errors, success=len(downloaded_files) > 0
                 )
+            
+            # Save final metadata
+            crawler.save_metadata(metadata)
+            total_files_downloaded = metadata.total_pdfs_downloaded
+            
+        else:
+            # Sequential crawling (default or dry-run)
+            for idx, website in enumerate(config.websites, 1):
+                if not website.enabled:
+                    continue
 
-                # Save metadata after each website
-                crawler.save_metadata(metadata)
+                logger.info(f"[{idx}/{len(config.websites)}] Crawling: {website.name}")
 
-                total_files_downloaded = metadata.total_pdfs_downloaded
+                # Calculate remaining files
+                max_files_remaining = None
+                if args.max_files:
+                    max_files_remaining = args.max_files - total_files_downloaded
+                    if max_files_remaining <= 0:
+                        logger.info("Reached max files limit")
+                        break
 
-                logger.info(
-                    f"  PDFs downloaded: {len([f for f in downloaded_files if f.crawl_status == 'success'])}"
-                )
-            else:
-                # Dry run - just analyze
-                try:
-                    pdf_urls, strategy = scraper.scrape_website(
-                        website.id, str(website.base_url), max_files_remaining
+                # Crawl website
+                if not args.dry_run:
+                    downloaded_files, errors = crawler.crawl_website(website, max_files_remaining)
+
+                    # Update metadata
+                    metadata = crawler.update_metadata(
+                        metadata, downloaded_files, errors, success=len(downloaded_files) > 0
                     )
+
+                    # Save metadata after each website
+                    crawler.save_metadata(metadata)
+
+                    total_files_downloaded = metadata.total_pdfs_downloaded
+
                     logger.info(
-                        f"  Found {len(pdf_urls)} PDF links (confidence: {strategy.confidence:.2f})"
+                        f"  PDFs downloaded: {len([f for f in downloaded_files if f.crawl_status == 'success'])}"
                     )
-                except Exception as e:
-                    logger.error(f"  Error analyzing website: {e}")
+                else:
+                    # Dry run - just analyze
+                    try:
+                        pdf_urls, strategy = scraper.scrape_website(
+                            website.id, str(website.base_url), max_files_remaining
+                        )
+                        logger.info(
+                            f"  Found {len(pdf_urls)} PDF links (confidence: {strategy.confidence:.2f})"
+                        )
+                    except Exception as e:
+                        logger.error(f"  Error analyzing website: {e}")
 
         # Finalize metadata
         if not args.dry_run:
@@ -290,7 +315,7 @@ def load_configuration(
 
 def setup_storage(
     output_folder: str, logger: logging.Logger
-) -> Optional[LocalStorageBackend]:
+) -> Optional[Union[LocalStorageBackend, "ADLSStorageBackend"]]:
     """Setup storage backend.
 
     Args:
@@ -301,17 +326,51 @@ def setup_storage(
         Storage backend or None if setup fails
     """
     try:
-        # For now, only support local storage
-        # TODO: Add Azure ADLS Gen2 detection
-        storage = LocalStorageBackend(output_folder)
+        # Check if Azure ADLS Gen2 path
+        if output_folder.startswith("abfss://"):
+            # Parse ADLS path: abfss://container@account.dfs.core.windows.net/path
+            from urllib.parse import urlparse
+            from okane.services.storage import ADLSStorageBackend
+            
+            parsed = urlparse(output_folder)
+            if not parsed.netloc or "@" not in parsed.netloc:
+                logger.error(f"Invalid ADLS Gen2 path format: {output_folder}")
+                return None
+            
+            # Extract container and account
+            container, account_host = parsed.netloc.split("@", 1)
+            account_name = account_host.split(".")[0]
+            
+            # Get credentials from environment
+            account_key = os.getenv("AZURE_STORAGE_ACCOUNT_KEY")
+            if not account_key:
+                logger.error("Azure credentials not found. Set AZURE_STORAGE_ACCOUNT_KEY environment variable.")
+                return None
+            
+            # Create ADLS storage backend
+            base_path = parsed.path.lstrip("/")
+            storage = ADLSStorageBackend(
+                account_name=account_name,
+                account_key=account_key,
+                filesystem_name=container,
+                base_path=base_path,
+            )
+            
+            logger.info(f"Using Azure ADLS Gen2 storage: {container}@{account_name}")
+            return storage
+        else:
+            # Local storage
+            storage = LocalStorageBackend(output_folder)
 
-        # Test write permission
-        test_path = Path(output_folder) / ".okane_test"
-        test_path.parent.mkdir(parents=True, exist_ok=True)
-        test_path.write_text("test")
-        test_path.unlink()
+            # Test write permission
+            test_path = Path(output_folder) / ".okane_test"
+            test_path.parent.mkdir(parents=True, exist_ok=True)
+            test_path.write_text("test")
+            test_path.unlink()
 
-        return storage
+            logger.info(f"Using local storage: {output_folder}")
+            return storage
+            
     except PermissionError:
         logger.error(f"Output folder not writable: {output_folder}")
         return None

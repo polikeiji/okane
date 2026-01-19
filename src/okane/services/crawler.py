@@ -3,7 +3,9 @@
 import json
 import logging
 import tempfile
+import threading
 import uuid
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
@@ -37,6 +39,9 @@ class Crawler:
         self.scraper = scraper
         self.downloader = downloader
         self.logger = logger or logging.getLogger("okane")
+        self._metadata_lock = threading.Lock()
+        self._total_files_downloaded = 0
+        self._total_files_lock = threading.Lock()
 
     def crawl_website(
         self,
@@ -251,3 +256,104 @@ class Crawler:
         """
         metadata.crawl_end_time = datetime.now(timezone.utc)
         return metadata
+
+    def crawl_websites_parallel(
+        self,
+        websites: list[WebsiteConfiguration],
+        max_workers: int,
+        max_files_total: Optional[int] = None,
+    ) -> tuple[CrawlMetadata, list[tuple[int, list[DownloadedPDF], list[dict[str, Any]]]]]:
+        """Crawl multiple websites in parallel.
+
+        Args:
+            websites: List of website configurations to crawl
+            max_workers: Maximum number of parallel workers
+            max_files_total: Total maximum files across all websites (None for unlimited)
+
+        Returns:
+            Tuple of (metadata object, list of (website_idx, downloaded_files, errors))
+        """
+        results: list[tuple[int, list[DownloadedPDF], list[dict[str, Any]]]] = []
+
+        # Reset counter for this crawl
+        with self._total_files_lock:
+            self._total_files_downloaded = 0
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all website crawl tasks
+            future_to_website = {}
+            for idx, website in enumerate(websites):
+                if not website.enabled:
+                    continue
+
+                # Calculate remaining files if limit is set
+                max_files_remaining = None
+                if max_files_total:
+                    with self._total_files_lock:
+                        if self._total_files_downloaded >= max_files_total:
+                            break
+                        max_files_remaining = max_files_total - self._total_files_downloaded
+
+                future = executor.submit(self._crawl_website_wrapper, idx, website, max_files_remaining)
+                future_to_website[future] = (idx, website)
+
+            # Process completed tasks
+            for future in as_completed(future_to_website):
+                idx, website = future_to_website[future]
+                try:
+                    result_idx, downloaded_files, errors = future.result()
+                    results.append((result_idx, downloaded_files, errors))
+
+                    # Update total files count
+                    with self._total_files_lock:
+                        self._total_files_downloaded += len(
+                            [f for f in downloaded_files if f.crawl_status == "success"]
+                        )
+                except Exception as e:
+                    # Error in the future itself
+                    self.logger.error(f"Parallel crawl error for {website.name}: {e}")
+                    results.append((idx, [], [{
+                        "website_id": website.id,
+                        "error_type": "ParallelExecutionError",
+                        "error_message": str(e),
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }]))
+
+        return tuple(results)  # type: ignore
+
+    def _crawl_website_wrapper(
+        self,
+        idx: int,
+        website: WebsiteConfiguration,
+        max_files_remaining: Optional[int],
+    ) -> tuple[int, list[DownloadedPDF], list[dict[str, Any]]]:
+        """Wrapper for crawling a website (for parallel execution).
+
+        Args:
+            idx: Index of the website
+            website: Website configuration
+            max_files_remaining: Remaining files to download
+
+        Returns:
+            Tuple of (index, downloaded_files, errors)
+        """
+        downloaded_files, errors = self.crawl_website(website, max_files_remaining)
+        return idx, downloaded_files, errors
+
+    def update_metadata_threadsafe(
+        self,
+        metadata: CrawlMetadata,
+        downloaded_files: list[DownloadedPDF],
+        errors: list[dict[str, Any]],
+        success: bool,
+    ) -> None:
+        """Update metadata in a thread-safe manner.
+
+        Args:
+            metadata: Metadata to update
+            downloaded_files: Files to add
+            errors: Errors to add
+            success: Whether crawl was successful
+        """
+        with self._metadata_lock:
+            self.update_metadata(metadata, downloaded_files, errors, success)
