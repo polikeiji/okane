@@ -90,14 +90,14 @@ An organization running automated data collection needs to store crawled PDFs di
 - **FR-001**: System MUST provide a CLI subcommand for crawling political cash flow PDF reports
 - **FR-002**: System MUST accept a parallelism parameter via CLI to control the number of concurrent website crawls (default: 1)
 - **FR-003**: System MUST accept a configuration file path parameter via CLI that specifies website URLs to crawl
-- **FR-004**: System MUST include a default JSON configuration file containing [NEEDS CLARIFICATION: Which specific government websites should be included in the default list? This requires research of Japanese national and prefectural government political finance reporting websites]
+- **FR-004**: System MUST include a default JSON configuration file containing Japanese national government political finance disclosure websites (Ministry of Internal Affairs and Communications political finance disclosure site, National Diet Library) plus all 47 prefectural government political finance disclosure sites
 - **FR-005**: System MUST accept an output folder path parameter via CLI where downloaded PDFs will be stored
 - **FR-006**: System MUST support both local file system and Azure Data Lake Storage Gen2 (ADLS Gen2) as valid output folder destinations
 - **FR-007**: System MUST analyze each target website using generative AI to dynamically determine the appropriate scraping logic for that specific website structure
 - **FR-008**: System MUST download all discovered PDF files containing political party or organization cash flow reports from each configured website
-- **FR-009**: System MUST store downloaded PDF files in the specified output folder with [NEEDS CLARIFICATION: What naming convention should be used for downloaded files? Should they retain original names, be renamed based on organization/date, or use a generated ID?]
+- **FR-009**: System MUST store downloaded PDF files in the specified output folder using a structured naming convention: `{organization-slug}_{reporting-period}_{original-name}.pdf` where organization-slug is a URL-safe identifier for the political party/organization, reporting-period is the fiscal period covered (e.g., 2024-Q1), and original-name is the sanitized original filename
 - **FR-010**: System MUST create and maintain a metadata JSON file in the output folder containing information about all crawled files
-- **FR-011**: System MUST include in the metadata JSON file: original URL of each downloaded PDF, timestamp of download, file size, and [NEEDS CLARIFICATION: What additional metadata should be captured? e.g., organization name, reporting period, file hash for deduplication, crawl status (success/failure), error messages?]
+- **FR-011**: System MUST include in the metadata JSON file for each crawled file: original URL, download timestamp, file size, file hash (SHA-256 for deduplication), HTTP response headers, crawl status (success/failure/partial), error messages (if any), extracted organization name, reporting period, file type/version information, and source website identifier
 - **FR-012**: System MUST handle network errors gracefully by logging failures and continuing with remaining websites
 - **FR-013**: System MUST validate that the output folder path is accessible and writable before starting the crawl
 - **FR-014**: System MUST validate the configuration JSON file format before starting the crawl
