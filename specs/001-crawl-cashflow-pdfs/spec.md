@@ -55,7 +55,23 @@ A researcher needs to crawl dozens of government websites efficiently. They run 
 
 ---
 
-### User Story 4 - Cloud Storage Integration (Priority: P4)
+### User Story 4 - Limited File Crawling for Testing (Priority: P3)
+
+A developer or researcher wants to test the crawling functionality or sample a subset of reports without downloading all available PDFs from government websites. They run the crawl subcommand with a max-files parameter to limit the number of PDFs downloaded.
+
+**Why this priority**: This is essential for testing, development, and quick sampling scenarios. Prevents accidental large downloads and enables faster iteration during development and testing.
+
+**Independent Test**: Can be tested by running the crawl with max-files=10 on a website with 50+ PDFs, verifying exactly 10 PDFs are downloaded and the crawl stops gracefully.
+
+**Acceptance Scenarios**:
+
+1. **Given** a website with 100 available PDFs and max-files set to 10, **When** the crawl executes, **Then** exactly 10 PDFs are downloaded and the crawl stops, logging that the limit was reached
+2. **Given** multiple websites configured and max-files set to 20, **When** the crawl executes across all websites, **Then** the total number of downloaded PDFs does not exceed 20 across all websites
+3. **Given** max-files set to 5 and only 3 PDFs available across all configured websites, **When** the crawl completes, **Then** all 3 available PDFs are downloaded without errors
+
+---
+
+### User Story 5 - Cloud Storage Integration (Priority: P4)
 
 An organization running automated data collection needs to store crawled PDFs directly in Azure Data Lake Storage Gen2 for enterprise data pipelines. They configure the output folder path to an ADLS Gen2 location and run the crawl subcommand.
 
@@ -82,6 +98,8 @@ An organization running automated data collection needs to store crawled PDFs di
 - What occurs when the AI analysis service is temporarily unavailable or returns ambiguous results?
 - How does the system handle extremely large PDF files (e.g., 100+ MB)?
 - What happens when multiple crawl processes are run simultaneously with overlapping output folders?
+- What happens when the max-files limit is reached in the middle of processing a website?
+- How does the system behave when max-files is set to 0 or a negative number?
 
 ## Requirements *(mandatory)*
 
@@ -104,6 +122,7 @@ An organization running automated data collection needs to store crawled PDFs di
 - **FR-015**: System MUST respect robots.txt and implement polite crawling with appropriate delays between requests to avoid overwhelming government servers
 - **FR-016**: System MUST log progress information during crawling, including websites being processed, files discovered, and download status
 - **FR-017**: System MUST provide clear error messages when required CLI parameters are missing or invalid
+- **FR-018**: System MUST accept an optional max-files parameter via CLI to limit the total number of PDF files downloaded across all websites (default: unlimited). When the limit is reached, the system MUST stop downloading additional files, log that the limit was reached, and complete the crawl gracefully with metadata for all downloaded files
 
 ### Key Entities
 
@@ -124,3 +143,4 @@ An organization running automated data collection needs to store crawled PDFs di
 - **SC-006**: The AI-powered website analysis correctly identifies and extracts PDF links from at least 90% of tested government websites with varying structures
 - **SC-007**: The crawl process completes within 30 minutes for a default configuration of 10 government websites when using parallelism=5
 - **SC-008**: Error messages clearly indicate the specific issue (missing parameters, invalid paths, network failures) in 100% of error scenarios
+- **SC-009**: When max-files limit is set, the system stops downloading after exactly the specified number of files and completes within 5 seconds of reaching the limit
