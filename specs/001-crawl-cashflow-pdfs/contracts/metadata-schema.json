@@ -1,0 +1,275 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/polikeiji/okane/schemas/crawl-metadata-v1.json",
+  "title": "Okane Crawl Metadata",
+  "description": "Metadata file containing information about crawled PDF files and crawl execution",
+  "type": "object",
+  "required": [
+    "crawl_id",
+    "crawl_start_time",
+    "total_websites",
+    "websites_crawled",
+    "websites_failed",
+    "total_pdfs_discovered",
+    "total_pdfs_downloaded",
+    "total_pdfs_failed",
+    "total_bytes_downloaded",
+    "parallelism",
+    "output_folder",
+    "storage_backend",
+    "config_file_path",
+    "downloaded_files",
+    "errors",
+    "metadata_version"
+  ],
+  "properties": {
+    "crawl_id": {
+      "type": "string",
+      "description": "Unique identifier for this crawl execution (UUID)",
+      "format": "uuid",
+      "examples": ["550e8400-e29b-41d4-a716-446655440000"]
+    },
+    "crawl_start_time": {
+      "type": "string",
+      "description": "When the crawl started (ISO 8601 format)",
+      "format": "date-time",
+      "examples": ["2026-01-19T10:00:00Z"]
+    },
+    "crawl_end_time": {
+      "type": ["string", "null"],
+      "description": "When the crawl completed (ISO 8601 format), null if in progress",
+      "format": "date-time",
+      "examples": ["2026-01-19T10:25:00Z", null]
+    },
+    "total_websites": {
+      "type": "integer",
+      "description": "Total number of websites in configuration",
+      "minimum": 0,
+      "examples": [10, 47]
+    },
+    "websites_crawled": {
+      "type": "integer",
+      "description": "Number of websites successfully crawled",
+      "minimum": 0,
+      "examples": [9, 45]
+    },
+    "websites_failed": {
+      "type": "integer",
+      "description": "Number of websites that failed to crawl",
+      "minimum": 0,
+      "examples": [1, 2]
+    },
+    "total_pdfs_discovered": {
+      "type": "integer",
+      "description": "Total number of PDF URLs found across all websites",
+      "minimum": 0,
+      "examples": [127, 1543]
+    },
+    "total_pdfs_downloaded": {
+      "type": "integer",
+      "description": "Number of PDFs successfully downloaded",
+      "minimum": 0,
+      "examples": [125, 1540]
+    },
+    "total_pdfs_failed": {
+      "type": "integer",
+      "description": "Number of PDFs that failed to download",
+      "minimum": 0,
+      "examples": [2, 3]
+    },
+    "total_bytes_downloaded": {
+      "type": "integer",
+      "description": "Total size of all downloaded files in bytes",
+      "minimum": 0,
+      "examples": [125829120, 5368709120]
+    },
+    "parallelism": {
+      "type": "integer",
+      "description": "Parallelism level used for this crawl",
+      "minimum": 1,
+      "examples": [1, 5, 10]
+    },
+    "max_files_limit": {
+      "type": ["integer", "null"],
+      "description": "Maximum files limit if specified, null for unlimited",
+      "minimum": 1,
+      "examples": [10, 100, null]
+    },
+    "output_folder": {
+      "type": "string",
+      "description": "Path to output folder (local or Azure ADLS Gen2)",
+      "minLength": 1,
+      "examples": [
+        "/path/to/output",
+        "./output",
+        "abfss://container@account.dfs.core.windows.net/pdfs"
+      ]
+    },
+    "storage_backend": {
+      "type": "string",
+      "description": "Type of storage used",
+      "enum": ["local", "adls"],
+      "examples": ["local", "adls"]
+    },
+    "config_file_path": {
+      "type": "string",
+      "description": "Path to configuration file used",
+      "examples": ["/path/to/config.json", "config/default.json"]
+    },
+    "downloaded_files": {
+      "type": "array",
+      "description": "List of all downloaded PDF metadata",
+      "items": {
+        "$ref": "#/definitions/downloaded_pdf"
+      }
+    },
+    "errors": {
+      "type": "array",
+      "description": "List of errors encountered during crawl",
+      "items": {
+        "$ref": "#/definitions/error_entry"
+      }
+    },
+    "metadata_version": {
+      "type": "string",
+      "description": "Version of metadata schema",
+      "pattern": "^\\d+\\.\\d+$",
+      "examples": ["1.0", "1.1"]
+    }
+  },
+  "definitions": {
+    "downloaded_pdf": {
+      "type": "object",
+      "required": [
+        "file_id",
+        "original_url",
+        "local_path",
+        "filename",
+        "file_size_bytes",
+        "sha256_hash",
+        "organization_slug",
+        "download_timestamp",
+        "website_id",
+        "http_status_code",
+        "http_headers",
+        "crawl_status",
+        "metadata_version"
+      ],
+      "properties": {
+        "file_id": {
+          "type": "string",
+          "description": "Unique identifier for this file (UUID)",
+          "format": "uuid"
+        },
+        "original_url": {
+          "type": "string",
+          "description": "Source URL where PDF was found",
+          "format": "uri",
+          "pattern": "^https?://"
+        },
+        "local_path": {
+          "type": "string",
+          "description": "Relative path where file is stored"
+        },
+        "filename": {
+          "type": "string",
+          "description": "Structured filename: {organization-slug}_{reporting-period}_{original-name}.pdf",
+          "pattern": "^[a-z0-9-]+_[a-z0-9-]+_.+\\.pdf$"
+        },
+        "file_size_bytes": {
+          "type": "integer",
+          "description": "Size of the downloaded file in bytes",
+          "minimum": 0
+        },
+        "sha256_hash": {
+          "type": "string",
+          "description": "SHA-256 hash of file content",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "organization_name": {
+          "type": ["string", "null"],
+          "description": "Extracted political party/organization name"
+        },
+        "organization_slug": {
+          "type": "string",
+          "description": "URL-safe organization identifier",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "reporting_period": {
+          "type": ["string", "null"],
+          "description": "Fiscal period (e.g., 2024-Q1, 2024-annual)"
+        },
+        "download_timestamp": {
+          "type": "string",
+          "description": "When the file was downloaded (ISO 8601 format)",
+          "format": "date-time"
+        },
+        "website_id": {
+          "type": "string",
+          "description": "ID of source website configuration"
+        },
+        "http_status_code": {
+          "type": "integer",
+          "description": "HTTP response status code",
+          "minimum": 100,
+          "maximum": 599
+        },
+        "http_headers": {
+          "type": "object",
+          "description": "Relevant HTTP response headers",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "crawl_status": {
+          "type": "string",
+          "description": "Status of crawl",
+          "enum": ["success", "failed", "partial"]
+        },
+        "error_message": {
+          "type": ["string", "null"],
+          "description": "Error message if crawl failed"
+        },
+        "metadata_version": {
+          "type": "string",
+          "description": "Version of metadata schema",
+          "pattern": "^\\d+\\.\\d+$"
+        }
+      }
+    },
+    "error_entry": {
+      "type": "object",
+      "required": ["error_type", "error_message", "timestamp"],
+      "properties": {
+        "website_id": {
+          "type": "string",
+          "description": "ID of website where error occurred (if applicable)"
+        },
+        "pdf_url": {
+          "type": "string",
+          "description": "URL of PDF that failed (if applicable)",
+          "format": "uri"
+        },
+        "error_type": {
+          "type": "string",
+          "description": "Type of error",
+          "examples": ["NetworkError", "ValidationError", "StorageError", "AIAnalysisError"]
+        },
+        "error_message": {
+          "type": "string",
+          "description": "Detailed error message"
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "When the error occurred (ISO 8601 format)",
+          "format": "date-time"
+        },
+        "context": {
+          "type": "object",
+          "description": "Additional context about the error",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

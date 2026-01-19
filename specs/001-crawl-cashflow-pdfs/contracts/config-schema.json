@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/polikeiji/okane/schemas/website-config-v1.json",
+  "title": "Okane Website Configuration",
+  "description": "Configuration file specifying government websites to crawl for political cash flow PDFs",
+  "type": "object",
+  "required": ["version", "websites"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Configuration schema version",
+      "pattern": "^\\d+\\.\\d+$",
+      "examples": ["1.0", "1.1"]
+    },
+    "websites": {
+      "type": "array",
+      "description": "List of government websites to crawl",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/website"
+      }
+    }
+  },
+  "definitions": {
+    "website": {
+      "type": "object",
+      "required": ["id", "name", "base_url"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this website (lowercase, alphanumeric, hyphens only)",
+          "pattern": "^[a-z0-9-]+$",
+          "examples": ["miac-national", "tokyo-prefecture", "osaka-prefecture"]
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name of the website",
+          "minLength": 1,
+          "examples": [
+            "Ministry of Internal Affairs and Communications",
+            "Tokyo Prefecture Political Finance",
+            "Osaka Prefecture Political Finance"
+          ]
+        },
+        "base_url": {
+          "type": "string",
+          "description": "Base URL of the website (must be HTTP or HTTPS)",
+          "format": "uri",
+          "pattern": "^https?://",
+          "examples": [
+            "https://www.soumu.go.jp/senkyo/seiji_s/",
+            "https://www.senkyo.metro.tokyo.lg.jp/",
+            "https://www.pref.osaka.lg.jp/senkan/"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description of the website",
+          "examples": [
+            "National political finance disclosure site",
+            "Regional political finance reports for Tokyo metropolitan area"
+          ]
+        },
+        "crawl_frequency": {
+          "type": "string",
+          "description": "Suggested crawl frequency (informational only, not enforced)",
+          "enum": ["daily", "weekly", "monthly", "quarterly", "annually"],
+          "examples": ["monthly", "quarterly"]
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether this website should be crawled",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "version": "1.0",
+      "websites": [
+        {
+          "id": "miac-national",
+          "name": "Ministry of Internal Affairs and Communications",
+          "base_url": "https://www.soumu.go.jp/senkyo/seiji_s/",
+          "description": "National political finance disclosure site",
+          "crawl_frequency": "monthly",
+          "enabled": true
+        },
+        {
+          "id": "tokyo-prefecture",
+          "name": "Tokyo Prefecture Political Finance",
+          "base_url": "https://www.senkyo.metro.tokyo.lg.jp/",
+          "description": "Tokyo metropolitan area political finance reports",
+          "crawl_frequency": "monthly",
+          "enabled": true
+        },
+        {
+          "id": "osaka-prefecture",
+          "name": "Osaka Prefecture Political Finance",
+          "base_url": "https://www.pref.osaka.lg.jp/senkan/",
+          "crawl_frequency": "quarterly",
+          "enabled": false
+        }
+      ]
+    }
+  ]
+}
