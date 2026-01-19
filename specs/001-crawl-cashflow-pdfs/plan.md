@@ -12,14 +12,16 @@ This feature implements a CLI tool for crawling political cash flow report PDFs 
 ## Technical Context
 
 **Language/Version**: Python 3.11+  
-**Primary Dependencies**: NEEDS CLARIFICATION (web scraping library, LLM integration library, Azure storage SDK, PDF utilities)  
+**Primary Dependencies**: httpx + beautifulsoup4 (web scraping), openai (LLM integration), azure-storage-file-datalake (ADLS Gen2), pypdf (PDF validation), pydantic (config validation)  
 **Storage**: Local filesystem and Azure Data Lake Storage Gen2 (ADLS Gen2), JSON metadata files  
-**Testing**: pytest with unit, integration, and contract tests  
+**Testing**: pytest with unit, integration, and contract tests; vcrpy for HTTP recording  
 **Target Platform**: Linux/macOS CLI (cross-platform Python)  
 **Project Type**: Single project (CLI tool with subcommands)  
 **Performance Goals**: Complete crawl of 10 government websites within 30 minutes using parallelism=5; handle 50+ PDFs per website  
 **Constraints**: Must respect robots.txt, implement polite crawling delays, handle network failures gracefully, support parallel processing up to configurable limit  
 **Scale/Scope**: 50+ government websites (national + 47 prefectures), potentially thousands of PDFs per crawl, metadata tracking for all files
+
+*All dependencies researched and justified in research.md*
 
 ## Constitution Check
 
