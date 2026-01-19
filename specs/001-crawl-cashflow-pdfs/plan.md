@@ -1,44 +1,66 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Crawl Political Cash Flow PDFs
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Branch**: `001-crawl-cashflow-pdfs` | **Date**: 2026-01-19 | **Spec**: [spec.md](./spec.md)
+**Input**: Feature specification from `/specs/001-crawl-cashflow-pdfs/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 
 ## Summary
 
-[Extract from feature spec: primary requirement + technical approach from research]
+This feature implements a CLI tool for crawling political cash flow report PDFs from Japanese government websites. The tool uses AI-powered website analysis to dynamically determine scraping strategies for different government sites, downloads PDFs with parallel processing capabilities, and stores them with comprehensive metadata in either local filesystem or Azure Data Lake Storage Gen2. The implementation must support configurable parallelism, file limits, and maintain detailed tracking of all crawled documents.
 
 ## Technical Context
 
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
-
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: Python 3.11+  
+**Primary Dependencies**: NEEDS CLARIFICATION (web scraping library, LLM integration library, Azure storage SDK, PDF utilities)  
+**Storage**: Local filesystem and Azure Data Lake Storage Gen2 (ADLS Gen2), JSON metadata files  
+**Testing**: pytest with unit, integration, and contract tests  
+**Target Platform**: Linux/macOS CLI (cross-platform Python)  
+**Project Type**: Single project (CLI tool with subcommands)  
+**Performance Goals**: Complete crawl of 10 government websites within 30 minutes using parallelism=5; handle 50+ PDFs per website  
+**Constraints**: Must respect robots.txt, implement polite crawling delays, handle network failures gracefully, support parallel processing up to configurable limit  
+**Scale/Scope**: 50+ government websites (national + 47 prefectures), potentially thousands of PDFs per crawl, metadata tracking for all files
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+### Main Constitution Compliance
+
+| Principle | Status | Notes |
+|-----------|--------|-------|
+| Test-Driven Development | ✅ PASS | Will follow TDD - tests written before implementation |
+| Integration Testing | ✅ PASS | Required for: CLI subcommand interface, Azure storage integration, LLM API integration, web scraping |
+| Observability | ✅ PASS | CLI with structured logging, JSON and human-readable output, progress tracking, error context |
+| Versioning & Breaking Changes | ✅ PASS | Will follow semantic versioning for CLI interface |
+| Simplicity & YAGNI | ✅ PASS | Implementing only specified features, no speculative functionality |
+| Documentation | ✅ PASS | README with usage, API docs for public interfaces, inline comments for complex logic |
+| Security | ✅ PASS | Input validation, secure credential handling for Azure, robots.txt compliance |
+| PR Workflow | ✅ PASS | Clean commit history, rebase workflow, code review |
+
+### Python Constitution Compliance
+
+| Principle | Status | Notes |
+|-----------|--------|-------|
+| Package Management (uv) | ✅ PASS | Will use uv for dependency management |
+| CLI (argparse) | ✅ PASS | CLI tool will use argparse standard library |
+| Code Quality (ruff) | ✅ PASS | Will use ruff for linting and formatting |
+| Type Hints | ✅ PASS | All functions will have type hints |
+| Project Structure | ✅ PASS | Will follow src/ and tests/ structure |
+| Testing (pytest) | ✅ PASS | Will use pytest for all tests |
+| Documentation | ✅ PASS | Google-style docstrings for all public APIs |
+| Error Handling | ✅ PASS | Specific exceptions, meaningful error messages |
+| Dependencies | ✅ PASS | Will minimize and justify all dependencies |
+| Python Version | ✅ PASS | Target Python 3.11+ |
+
+**Gate Status**: ✅ PASS - No violations detected. All constitution requirements will be met.
 
 ## Project Structure
 
 ### Documentation (this feature)
 
 ```text
-specs/[###-feature]/
+specs/001-crawl-cashflow-pdfs/
 ├── plan.md              # This file (/speckit.plan command output)
 ├── research.md          # Phase 0 output (/speckit.plan command)
 ├── data-model.md        # Phase 1 output (/speckit.plan command)
@@ -48,57 +70,57 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── okane/
+│   ├── __init__.py
+│   ├── cli/
+│   │   ├── __init__.py
+│   │   ├── main.py           # Main CLI entry point
+│   │   └── crawl.py          # Crawl subcommand implementation
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── config.py         # Configuration models
+│   │   ├── metadata.py       # Metadata models
+│   │   └── website.py        # Website configuration models
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── crawler.py        # Core crawling logic
+│   │   ├── scraper.py        # AI-powered scraping strategy
+│   │   ├── storage.py        # Storage abstraction (local/Azure)
+│   │   └── downloader.py     # PDF download handler
+│   └── lib/
+│       ├── __init__.py
+│       ├── ai_analyzer.py    # LLM integration for website analysis
+│       ├── pdf_utils.py      # PDF validation/utilities
+│       └── url_utils.py      # URL handling and validation
 
 tests/
 ├── contract/
+│   ├── test_cli_interface.py        # CLI contract tests
+│   └── test_metadata_format.py      # Metadata format contract
 ├── integration/
+│   ├── test_azure_storage.py        # Azure storage integration
+│   ├── test_llm_integration.py      # LLM API integration
+│   └── test_crawl_workflow.py       # End-to-end crawl workflow
 └── unit/
+    ├── test_crawler.py               # Crawler unit tests
+    ├── test_scraper.py               # Scraper unit tests
+    ├── test_storage.py               # Storage unit tests
+    └── test_models.py                # Model unit tests
 
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
+config/
+└── default_websites.json             # Default government website list
 
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+pyproject.toml                        # Project metadata and dependencies
+README.md                             # Project documentation
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: Single project structure selected as this is a standalone CLI tool. All code will be in `src/okane/` with clear separation between CLI interface, business logic (services), domain models, and utility libraries. Tests are organized by type (contract/integration/unit) following Python constitution requirements.
 
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+No complexity violations detected. The implementation follows all constitution principles with straightforward design patterns appropriate for a CLI tool.
