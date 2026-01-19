@@ -1,7 +1,7 @@
 """Metadata models for crawl tracking and file information."""
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, HttpUrl
 
@@ -34,40 +34,44 @@ class DownloadedPDF(BaseModel):
     filename: str
     file_size_bytes: int = Field(..., gt=0)
     sha256_hash: str = Field(..., pattern=r"^[a-f0-9]{64}$")
-    organization_name: Optional[str] = None
+    organization_name: str | None = None
     organization_slug: str = Field(..., pattern=r"^[a-z0-9-]+$")
-    reporting_period: Optional[str] = None
+    reporting_period: str | None = None
     download_timestamp: datetime
     website_id: str
     http_status_code: int
     http_headers: dict[str, str]
     crawl_status: str = Field(..., pattern=r"^(success|failed|partial)$")
-    error_message: Optional[str] = None
+    error_message: str | None = None
     metadata_version: str
 
-    model_config = {"json_schema_extra": {"examples": [
-        {
-            "file_id": "550e8400-e29b-41d4-a716-446655440000",
-            "original_url": "https://www.soumu.go.jp/senkyo/seiji_s/reports/2024/ldp_2024_q1.pdf",
-            "local_path": "pdfs/ldp_2024-q1_annual-report.pdf",
-            "filename": "ldp_2024-q1_annual-report.pdf",
-            "file_size_bytes": 2457600,
-            "sha256_hash": "a3b2c1d4e5f6789012345678901234567890123456789012345678901234567890",
-            "organization_name": "Liberal Democratic Party",
-            "organization_slug": "ldp",
-            "reporting_period": "2024-Q1",
-            "download_timestamp": "2026-01-19T10:30:00Z",
-            "website_id": "miac-national",
-            "http_status_code": 200,
-            "http_headers": {
-                "Content-Type": "application/pdf",
-                "Last-Modified": "2024-04-15T08:00:00Z",
-            },
-            "crawl_status": "success",
-            "error_message": None,
-            "metadata_version": "1.0",
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "file_id": "550e8400-e29b-41d4-a716-446655440000",
+                    "original_url": "https://www.soumu.go.jp/senkyo/seiji_s/reports/2024/ldp_2024_q1.pdf",
+                    "local_path": "pdfs/ldp_2024-q1_annual-report.pdf",
+                    "filename": "ldp_2024-q1_annual-report.pdf",
+                    "file_size_bytes": 2457600,
+                    "sha256_hash": "a3b2c1d4e5f6789012345678901234567890123456789012345678901234567890",
+                    "organization_name": "Liberal Democratic Party",
+                    "organization_slug": "ldp",
+                    "reporting_period": "2024-Q1",
+                    "download_timestamp": "2026-01-19T10:30:00Z",
+                    "website_id": "miac-national",
+                    "http_status_code": 200,
+                    "http_headers": {
+                        "Content-Type": "application/pdf",
+                        "Last-Modified": "2024-04-15T08:00:00Z",
+                    },
+                    "crawl_status": "success",
+                    "error_message": None,
+                    "metadata_version": "1.0",
+                }
+            ]
         }
-    ]}}
+    }
 
 
 class CrawlMetadata(BaseModel):
@@ -96,7 +100,7 @@ class CrawlMetadata(BaseModel):
 
     crawl_id: str
     crawl_start_time: datetime
-    crawl_end_time: Optional[datetime] = None
+    crawl_end_time: datetime | None = None
     total_websites: int = Field(..., ge=0)
     websites_crawled: int = Field(..., ge=0)
     websites_failed: int = Field(..., ge=0)
@@ -105,7 +109,7 @@ class CrawlMetadata(BaseModel):
     total_pdfs_failed: int = Field(..., ge=0)
     total_bytes_downloaded: int = Field(..., ge=0)
     parallelism: int = Field(..., gt=0)
-    max_files_limit: Optional[int] = Field(default=None, gt=0)
+    max_files_limit: int | None = Field(default=None, gt=0)
     output_folder: str
     storage_backend: str = Field(..., pattern=r"^(local|adls)$")
     config_file_path: str
@@ -113,32 +117,36 @@ class CrawlMetadata(BaseModel):
     errors: list[dict[str, Any]]
     metadata_version: str
 
-    model_config = {"json_schema_extra": {"examples": [
-        {
-            "crawl_id": "660e9500-f39c-41d4-b826-556655440000",
-            "crawl_start_time": "2026-01-19T10:00:00Z",
-            "crawl_end_time": "2026-01-19T10:25:00Z",
-            "total_websites": 10,
-            "websites_crawled": 9,
-            "websites_failed": 1,
-            "total_pdfs_discovered": 47,
-            "total_pdfs_downloaded": 45,
-            "total_pdfs_failed": 2,
-            "total_bytes_downloaded": 125829120,
-            "parallelism": 5,
-            "max_files_limit": None,
-            "output_folder": "/path/to/output",
-            "storage_backend": "local",
-            "config_file_path": "/path/to/config.json",
-            "downloaded_files": [],
-            "errors": [
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
                 {
-                    "website_id": "site-xyz",
-                    "error_type": "NetworkError",
-                    "error_message": "Connection timeout",
-                    "timestamp": "2026-01-19T10:15:00Z",
+                    "crawl_id": "660e9500-f39c-41d4-b826-556655440000",
+                    "crawl_start_time": "2026-01-19T10:00:00Z",
+                    "crawl_end_time": "2026-01-19T10:25:00Z",
+                    "total_websites": 10,
+                    "websites_crawled": 9,
+                    "websites_failed": 1,
+                    "total_pdfs_discovered": 47,
+                    "total_pdfs_downloaded": 45,
+                    "total_pdfs_failed": 2,
+                    "total_bytes_downloaded": 125829120,
+                    "parallelism": 5,
+                    "max_files_limit": None,
+                    "output_folder": "/path/to/output",
+                    "storage_backend": "local",
+                    "config_file_path": "/path/to/config.json",
+                    "downloaded_files": [],
+                    "errors": [
+                        {
+                            "website_id": "site-xyz",
+                            "error_type": "NetworkError",
+                            "error_message": "Connection timeout",
+                            "timestamp": "2026-01-19T10:15:00Z",
+                        }
+                    ],
+                    "metadata_version": "1.0",
                 }
-            ],
-            "metadata_version": "1.0",
+            ]
         }
-    ]}}
+    }

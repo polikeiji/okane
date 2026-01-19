@@ -174,23 +174,23 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T070 [P] Add --log-level CLI argument in src/okane/cli/crawl.py (DEBUG, INFO, WARNING, ERROR, CRITICAL) with default INFO
-- [ ] T071 [P] Add --log-format CLI argument in src/okane/cli/crawl.py (text, json) with default text
-- [ ] T072 [P] Implement JSON log output format in src/okane/lib/logging_config.py with structured error messages per contract
-- [ ] T073 [P] Add --timeout CLI argument in src/okane/cli/crawl.py with default 30s connect, 300s read
-- [ ] T074 [P] Add --user-agent CLI argument in src/okane/cli/crawl.py with default "Okane-Crawler/1.0.0 (+https://github.com/polikeiji/okane)"
-- [ ] T075 [P] Add --dry-run CLI argument in src/okane/cli/crawl.py to simulate crawl without downloading files
-- [ ] T076 [P] Implement dry-run mode in src/okane/services/crawler.py showing discovered PDFs without actual downloads
-- [ ] T077 [P] Add JSON summary output support in src/okane/cli/crawl.py when --log-format json is specified
+- [X] T070 [P] Add --log-level CLI argument in src/okane/cli/crawl.py (DEBUG, INFO, WARNING, ERROR, CRITICAL) with default INFO
+- [X] T071 [P] Add --log-format CLI argument in src/okane/cli/crawl.py (text, json) with default text
+- [X] T072 [P] Implement JSON log output format in src/okane/lib/logging_config.py with structured error messages per contract
+- [X] T073 [P] Add --timeout CLI argument in src/okane/cli/crawl.py with default 30s connect, 300s read
+- [X] T074 [P] Add --user-agent CLI argument in src/okane/cli/crawl.py with default "Okane-Crawler/1.0.0 (+https://github.com/polikeiji/okane)"
+- [X] T075 [P] Add --dry-run CLI argument in src/okane/cli/crawl.py to simulate crawl without downloading files
+- [X] T076 [P] Implement dry-run mode in src/okane/services/crawler.py showing discovered PDFs without actual downloads
+- [X] T077 [P] Add JSON summary output support in src/okane/cli/crawl.py when --log-format json is specified
 - [ ] T078 [P] Create contract tests in tests/contract/test_cli_interface.py verifying all CLI arguments and exit codes
 - [ ] T079 [P] Create contract tests in tests/contract/test_metadata_format.py validating metadata.json schema compliance
 - [ ] T080 Add integration test in tests/integration/test_crawl_workflow.py for end-to-end crawl with sample websites
 - [ ] T081 [P] Add unit tests in tests/unit/test_models.py for all Pydantic model validation rules
 - [ ] T082 [P] Add unit tests in tests/unit/test_storage.py for LocalStorageBackend and ADLSStorageBackend
 - [ ] T083 [P] Add unit tests in tests/unit/test_crawler.py for crawler orchestration logic with mocked dependencies
-- [ ] T084 Update README.md with complete usage documentation from quickstart.md including all CLI options
-- [ ] T085 Add .gitignore file to exclude Python cache, uv venv, build artifacts, and downloaded PDFs from test runs
-- [ ] T086 Validate all code with ruff linter and formatter: `uv run ruff check src/ tests/ && uv run ruff format src/ tests/`
+- [X] T084 Update README.md with complete usage documentation from quickstart.md including all CLI options
+- [X] T085 Add .gitignore file to exclude Python cache, uv venv, build artifacts, and downloaded PDFs from test runs
+- [X] T086 Validate all code with ruff linter and formatter: `uv run ruff check src/ tests/ && uv run ruff format src/ tests/`
 - [ ] T087 Run mypy type checker on all code: `uv run mypy src/`
 - [ ] T088 Run complete test suite: `uv run pytest tests/` and verify all tests pass
 - [ ] T089 Execute quickstart.md validation: run basic crawl with max-files=5 to verify end-to-end functionality

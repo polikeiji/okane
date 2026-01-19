@@ -1,7 +1,5 @@
 """Website scraping strategy models."""
 
-from typing import Optional
-
 from pydantic import BaseModel, Field
 
 
@@ -21,9 +19,9 @@ class ScrapingStrategy(BaseModel):
     website_id: str
     strategy_type: str = Field(..., pattern=r"^(css_selector|xpath|regex|pagination)$")
     pdf_link_selectors: list[str]
-    pagination_selector: Optional[str] = None
-    max_pages: Optional[int] = Field(default=10, gt=0)
-    metadata_extraction: Optional[dict[str, str]] = None
+    pagination_selector: str | None = None
+    max_pages: int | None = Field(default=10, gt=0)
+    metadata_extraction: dict[str, str] | None = None
     confidence: float = Field(..., ge=0.0, le=1.0)
 
     @property
@@ -31,17 +29,21 @@ class ScrapingStrategy(BaseModel):
         """Return True if confidence score is >= 0.8."""
         return self.confidence >= 0.8
 
-    model_config = {"json_schema_extra": {"examples": [
-        {
-            "website_id": "miac-national",
-            "strategy_type": "css_selector",
-            "pdf_link_selectors": ["a[href$='.pdf']", "a.pdf-link"],
-            "pagination_selector": "a.next-page",
-            "max_pages": 10,
-            "metadata_extraction": {
-                "organization": ".org-name",
-                "period": ".reporting-period",
-            },
-            "confidence": 0.95,
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "website_id": "miac-national",
+                    "strategy_type": "css_selector",
+                    "pdf_link_selectors": ["a[href$='.pdf']", "a.pdf-link"],
+                    "pagination_selector": "a.next-page",
+                    "max_pages": 10,
+                    "metadata_extraction": {
+                        "organization": ".org-name",
+                        "period": ".reporting-period",
+                    },
+                    "confidence": 0.95,
+                }
+            ]
         }
-    ]}}
+    }

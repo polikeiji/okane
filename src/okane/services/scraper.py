@@ -1,8 +1,7 @@
 """Website scraper service for extracting PDF URLs."""
 
 import time
-from typing import Optional
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin
 
 import httpx
 from bs4 import BeautifulSoup
@@ -17,7 +16,7 @@ class WebsiteScraper:
 
     def __init__(
         self,
-        ai_analyzer: Optional[AIAnalyzer] = None,
+        ai_analyzer: AIAnalyzer | None = None,
         user_agent: str = "Okane-Crawler/1.0.0 (+https://github.com/polikeiji/okane)",
         timeout: int = 30,
         polite_delay: float = 1.5,
@@ -53,7 +52,7 @@ class WebsiteScraper:
         self.client.close()
 
     def scrape_website(
-        self, website_id: str, base_url: str, max_pdfs: Optional[int] = None
+        self, website_id: str, base_url: str, max_pdfs: int | None = None
     ) -> tuple[list[str], ScrapingStrategy]:
         """Scrape website to extract PDF URLs.
 
@@ -107,7 +106,7 @@ class WebsiteScraper:
         html_content: str,
         base_url: str,
         strategy: ScrapingStrategy,
-        max_pdfs: Optional[int] = None,
+        max_pdfs: int | None = None,
     ) -> list[str]:
         """Extract PDF URLs from HTML using scraping strategy.
 
@@ -153,7 +152,7 @@ class WebsiteScraper:
         soup: BeautifulSoup,
         base_url: str,
         strategy: ScrapingStrategy,
-        remaining_pdfs: Optional[int] = None,
+        remaining_pdfs: int | None = None,
     ) -> list[str]:
         """Handle paginated results.
 
@@ -193,9 +192,7 @@ class WebsiteScraper:
                         href = link.get("href")
                         if href:
                             absolute_url = urljoin(base_url, href)
-                            if is_valid_url(absolute_url) and absolute_url.lower().endswith(
-                                ".pdf"
-                            ):
+                            if is_valid_url(absolute_url) and absolute_url.lower().endswith(".pdf"):
                                 if absolute_url not in pdf_urls:
                                     pdf_urls.append(absolute_url)
                                     if remaining_pdfs and len(pdf_urls) >= remaining_pdfs:

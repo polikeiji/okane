@@ -1,14 +1,10 @@
 """Core crawler orchestrator service."""
 
-import json
 import logging
-import tempfile
 import threading
-import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 from okane.models.config import WebsiteConfiguration
 from okane.models.metadata import CrawlMetadata, DownloadedPDF
@@ -25,7 +21,7 @@ class Crawler:
         storage: StorageBackend,
         scraper: WebsiteScraper,
         downloader: PDFDownloader,
-        logger: Optional[logging.Logger] = None,
+        logger: logging.Logger | None = None,
     ) -> None:
         """Initialize crawler.
 
@@ -46,7 +42,7 @@ class Crawler:
     def crawl_website(
         self,
         website: WebsiteConfiguration,
-        max_files_remaining: Optional[int] = None,
+        max_files_remaining: int | None = None,
     ) -> tuple[list[DownloadedPDF], list[dict[str, Any]]]:
         """Crawl a single website and download PDFs.
 
@@ -109,7 +105,7 @@ class Crawler:
                                 "url": pdf_url,
                                 "error_type": "DownloadError",
                                 "error_message": error or "Unknown error",
-                                "timestamp": datetime.now(timezone.utc).isoformat(),
+                                "timestamp": datetime.now(UTC).isoformat(),
                             }
                         )
                         self.logger.warning(f"Failed to download PDF: {pdf_url} - {error}")
@@ -122,7 +118,7 @@ class Crawler:
                             "url": pdf_url,
                             "error_type": type(e).__name__,
                             "error_message": str(e),
-                            "timestamp": datetime.now(timezone.utc).isoformat(),
+                            "timestamp": datetime.now(UTC).isoformat(),
                         }
                     )
                     self.logger.error(f"Error downloading PDF: {pdf_url} - {e}")
@@ -135,7 +131,7 @@ class Crawler:
                     "url": str(website.base_url),
                     "error_type": type(e).__name__,
                     "error_message": str(e),
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 }
             )
             self.logger.error(f"Failed to crawl website {website.name}: {e}")
@@ -164,7 +160,7 @@ class Crawler:
         crawl_start_time: datetime,
         total_websites: int,
         parallelism: int,
-        max_files_limit: Optional[int],
+        max_files_limit: int | None,
         output_folder: str,
         storage_backend: str,
         config_file_path: str,
@@ -254,14 +250,14 @@ class Crawler:
         Returns:
             Finalized CrawlMetadata object
         """
-        metadata.crawl_end_time = datetime.now(timezone.utc)
+        metadata.crawl_end_time = datetime.now(UTC)
         return metadata
 
     def crawl_websites_parallel(
         self,
         websites: list[WebsiteConfiguration],
         max_workers: int,
-        max_files_total: Optional[int] = None,
+        max_files_total: int | None = None,
     ) -> tuple[CrawlMetadata, list[tuple[int, list[DownloadedPDF], list[dict[str, Any]]]]]:
         """Crawl multiple websites in parallel.
 
@@ -294,7 +290,9 @@ class Crawler:
                             break
                         max_files_remaining = max_files_total - self._total_files_downloaded
 
-                future = executor.submit(self._crawl_website_wrapper, idx, website, max_files_remaining)
+                future = executor.submit(
+                    self._crawl_website_wrapper, idx, website, max_files_remaining
+                )
                 future_to_website[future] = (idx, website)
 
             # Process completed tasks
@@ -312,12 +310,20 @@ class Crawler:
                 except Exception as e:
                     # Error in the future itself
                     self.logger.error(f"Parallel crawl error for {website.name}: {e}")
-                    results.append((idx, [], [{
-                        "website_id": website.id,
-                        "error_type": "ParallelExecutionError",
-                        "error_message": str(e),
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
-                    }]))
+                    results.append(
+                        (
+                            idx,
+                            [],
+                            [
+                                {
+                                    "website_id": website.id,
+                                    "error_type": "ParallelExecutionError",
+                                    "error_message": str(e),
+                                    "timestamp": datetime.now(UTC).isoformat(),
+                                }
+                            ],
+                        )
+                    )
 
         return tuple(results)  # type: ignore
 
@@ -325,7 +331,7 @@ class Crawler:
         self,
         idx: int,
         website: WebsiteConfiguration,
-        max_files_remaining: Optional[int],
+        max_files_remaining: int | None,
     ) -> tuple[int, list[DownloadedPDF], list[dict[str, Any]]]:
         """Wrapper for crawling a website (for parallel execution).
 
