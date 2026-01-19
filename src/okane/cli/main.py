@@ -27,9 +27,7 @@ def main() -> None:
         help="Increase verbosity (can be repeated: -v, -vv, -vvv)",
     )
 
-    parser.add_argument(
-        "-q", "--quiet", action="store_true", help="Suppress non-error output"
-    )
+    parser.add_argument("-q", "--quiet", action="store_true", help="Suppress non-error output")
 
     # Subcommands
     subparsers = parser.add_subparsers(dest="command", help="Available commands")

@@ -1,7 +1,5 @@
 """Configuration models for website crawling."""
 
-from typing import Optional
-
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 
@@ -20,20 +18,24 @@ class WebsiteConfiguration(BaseModel):
     id: str = Field(..., pattern=r"^[a-z0-9-]+$")
     name: str
     base_url: HttpUrl
-    description: Optional[str] = None
-    crawl_frequency: Optional[str] = None
+    description: str | None = None
+    crawl_frequency: str | None = None
     enabled: bool = True
 
-    model_config = {"json_schema_extra": {"examples": [
-        {
-            "id": "miac-national",
-            "name": "Ministry of Internal Affairs and Communications",
-            "base_url": "https://www.soumu.go.jp/senkyo/seiji_s/",
-            "description": "National political finance disclosure site",
-            "crawl_frequency": "monthly",
-            "enabled": True,
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "id": "miac-national",
+                    "name": "Ministry of Internal Affairs and Communications",
+                    "base_url": "https://www.soumu.go.jp/senkyo/seiji_s/",
+                    "description": "National political finance disclosure site",
+                    "crawl_frequency": "monthly",
+                    "enabled": True,
+                }
+            ]
         }
-    ]}}
+    }
 
 
 class WebsiteConfigurationList(BaseModel):
@@ -58,20 +60,24 @@ class WebsiteConfigurationList(BaseModel):
             raise ValueError("Must contain at least one website")
         return v
 
-    model_config = {"json_schema_extra": {"examples": [
-        {
-            "version": "1.0",
-            "websites": [
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
                 {
-                    "id": "miac-national",
-                    "name": "Ministry of Internal Affairs",
-                    "base_url": "https://www.soumu.go.jp/senkyo/seiji_s/",
-                },
-                {
-                    "id": "tokyo-prefecture",
-                    "name": "Tokyo Prefecture",
-                    "base_url": "https://www.senkyo.metro.tokyo.lg.jp/",
-                },
-            ],
+                    "version": "1.0",
+                    "websites": [
+                        {
+                            "id": "miac-national",
+                            "name": "Ministry of Internal Affairs",
+                            "base_url": "https://www.soumu.go.jp/senkyo/seiji_s/",
+                        },
+                        {
+                            "id": "tokyo-prefecture",
+                            "name": "Tokyo Prefecture",
+                            "base_url": "https://www.senkyo.metro.tokyo.lg.jp/",
+                        },
+                    ],
+                }
+            ]
         }
-    ]}}
+    }

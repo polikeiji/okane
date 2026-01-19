@@ -4,7 +4,6 @@ import os
 import tempfile
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Union
 
 
 class StorageBackend(ABC):
@@ -67,7 +66,7 @@ class StorageBackend(ABC):
 class LocalStorageBackend(StorageBackend):
     """Local filesystem storage backend with atomic writes."""
 
-    def __init__(self, base_path: Union[str, Path]) -> None:
+    def __init__(self, base_path: str | Path) -> None:
         """Initialize local storage backend.
 
         Args:
@@ -183,9 +182,7 @@ class ADLSStorageBackend(StorageBackend):
 
         # Create service client
         account_url = f"https://{account_name}.dfs.core.windows.net"
-        self.service_client = DataLakeServiceClient(
-            account_url=account_url, credential=account_key
-        )
+        self.service_client = DataLakeServiceClient(account_url=account_url, credential=account_key)
 
         # Get filesystem client
         self.filesystem_client = self.service_client.get_file_system_client(filesystem_name)
@@ -206,7 +203,7 @@ class ADLSStorageBackend(StorageBackend):
         try:
             file_client.upload_data(content, overwrite=True)
         except Exception as e:
-            raise IOError(f"Failed to write to ADLS Gen2: {e}") from e
+            raise OSError(f"Failed to write to ADLS Gen2: {e}") from e
 
     def read_file(self, file_path: str) -> bytes:
         """Read file content from ADLS Gen2.
@@ -230,7 +227,7 @@ class ADLSStorageBackend(StorageBackend):
         except Exception as e:
             if "PathNotFound" in str(e):
                 raise FileNotFoundError(f"File not found: {file_path}") from e
-            raise IOError(f"Failed to read from ADLS Gen2: {e}") from e
+            raise OSError(f"Failed to read from ADLS Gen2: {e}") from e
 
     def exists(self, file_path: str) -> bool:
         """Check if file exists in ADLS Gen2.
@@ -260,4 +257,6 @@ class ADLSStorageBackend(StorageBackend):
             Full ADLS path in abfss:// format
         """
         full_path = f"{self.base_path}/{relative_path}".strip("/")
-        return f"abfss://{self.filesystem_name}@{self.account_name}.dfs.core.windows.net/{full_path}"
+        return (
+            f"abfss://{self.filesystem_name}@{self.account_name}.dfs.core.windows.net/{full_path}"
+        )

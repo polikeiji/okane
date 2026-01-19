@@ -4,11 +4,13 @@ import argparse
 import json
 import logging
 import os
-import sys
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import TYPE_CHECKING, Any, Union
+
+if TYPE_CHECKING:
+    from okane.services.storage import ADLSStorageBackend
 
 from okane.lib.ai_analyzer import AIAnalyzer
 from okane.lib.logging_config import configure_logging
@@ -147,11 +149,11 @@ def handle_crawl(args: argparse.Namespace) -> int:
 
         # Create initial metadata
         crawl_id = str(uuid.uuid4())
-        crawl_start_time = datetime.now(timezone.utc)
-        
+        crawl_start_time = datetime.now(UTC)
+
         # Determine storage backend type
         storage_backend_type = "adls" if args.output_folder.startswith("abfss://") else "local"
-        
+
         metadata = crawler.create_metadata(
             crawl_id=crawl_id,
             crawl_start_time=crawl_start_time,
@@ -165,25 +167,25 @@ def handle_crawl(args: argparse.Namespace) -> int:
 
         # Crawl websites
         total_files_downloaded = 0
-        
+
         if args.parallelism > 1 and not args.dry_run:
             # Parallel crawling
             logger.info(f"Starting parallel crawl with {args.parallelism} workers...")
-            
+
             results = crawler.crawl_websites_parallel(
                 config.websites, args.parallelism, args.max_files
             )
-            
+
             # Update metadata with all results
-            for idx, downloaded_files, errors in results:
+            for _idx, downloaded_files, errors in results:
                 metadata = crawler.update_metadata(
                     metadata, downloaded_files, errors, success=len(downloaded_files) > 0
                 )
-            
+
             # Save final metadata
             crawler.save_metadata(metadata)
             total_files_downloaded = metadata.total_pdfs_downloaded
-            
+
         else:
             # Sequential crawling (default or dry-run)
             for idx, website in enumerate(config.websites, 1):
@@ -279,8 +281,8 @@ def validate_arguments(args: argparse.Namespace, logger: logging.Logger) -> int:
 
 
 def load_configuration(
-    config_path: Optional[str], logger: logging.Logger
-) -> Optional[WebsiteConfigurationList]:
+    config_path: str | None, logger: logging.Logger
+) -> WebsiteConfigurationList | None:
     """Load website configuration.
 
     Args:
@@ -293,13 +295,15 @@ def load_configuration(
     try:
         if config_path:
             # Load custom configuration
-            with open(config_path, "r", encoding="utf-8") as f:
+            with open(config_path, encoding="utf-8") as f:
                 config_data = json.load(f)
             return WebsiteConfigurationList(**config_data)
         else:
             # Load default configuration
-            default_config_path = Path(__file__).parent.parent.parent.parent / "config" / "default_websites.json"
-            with open(default_config_path, "r", encoding="utf-8") as f:
+            default_config_path = (
+                Path(__file__).parent.parent.parent.parent / "config" / "default_websites.json"
+            )
+            with open(default_config_path, encoding="utf-8") as f:
                 config_data = json.load(f)
             return WebsiteConfigurationList(**config_data)
     except FileNotFoundError:
@@ -315,7 +319,7 @@ def load_configuration(
 
 def setup_storage(
     output_folder: str, logger: logging.Logger
-) -> Optional[Union[LocalStorageBackend, "ADLSStorageBackend"]]:
+) -> Union[LocalStorageBackend, "ADLSStorageBackend"] | None:
     """Setup storage backend.
 
     Args:
@@ -330,23 +334,26 @@ def setup_storage(
         if output_folder.startswith("abfss://"):
             # Parse ADLS path: abfss://container@account.dfs.core.windows.net/path
             from urllib.parse import urlparse
+
             from okane.services.storage import ADLSStorageBackend
-            
+
             parsed = urlparse(output_folder)
             if not parsed.netloc or "@" not in parsed.netloc:
                 logger.error(f"Invalid ADLS Gen2 path format: {output_folder}")
                 return None
-            
+
             # Extract container and account
             container, account_host = parsed.netloc.split("@", 1)
             account_name = account_host.split(".")[0]
-            
+
             # Get credentials from environment
             account_key = os.getenv("AZURE_STORAGE_ACCOUNT_KEY")
             if not account_key:
-                logger.error("Azure credentials not found. Set AZURE_STORAGE_ACCOUNT_KEY environment variable.")
+                logger.error(
+                    "Azure credentials not found. Set AZURE_STORAGE_ACCOUNT_KEY environment variable."
+                )
                 return None
-            
+
             # Create ADLS storage backend
             base_path = parsed.path.lstrip("/")
             storage = ADLSStorageBackend(
@@ -355,7 +362,7 @@ def setup_storage(
                 filesystem_name=container,
                 base_path=base_path,
             )
-            
+
             logger.info(f"Using Azure ADLS Gen2 storage: {container}@{account_name}")
             return storage
         else:
@@ -370,7 +377,7 @@ def setup_storage(
 
             logger.info(f"Using local storage: {output_folder}")
             return storage
-            
+
     except PermissionError:
         logger.error(f"Output folder not writable: {output_folder}")
         return None
@@ -379,9 +386,7 @@ def setup_storage(
         return None
 
 
-def print_summary(
-    metadata: Any, log_format: str, logger: logging.Logger
-) -> None:
+def print_summary(metadata: Any, log_format: str, logger: logging.Logger) -> None:
     """Print crawl summary.
 
     Args:
@@ -423,9 +428,7 @@ def print_summary(
         print(f"  PDFs downloaded: {metadata.total_pdfs_downloaded}")
         if metadata.total_pdfs_failed > 0:
             print(f"  PDFs failed: {metadata.total_pdfs_failed}")
-        print(
-            f"  Total size: {metadata.total_bytes_downloaded / (1024 * 1024):.1f} MB"
-        )
+        print(f"  Total size: {metadata.total_bytes_downloaded / (1024 * 1024):.1f} MB")
         print(f"  Duration: {duration:.1f}s")
         print(f"\nMetadata saved to: {metadata.output_folder}/metadata.json")
         print("=" * 60)

@@ -2,9 +2,8 @@
 
 import tempfile
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 import httpx
 
@@ -92,7 +91,7 @@ class PDFDownloader:
             sanitized_filename = sanitize_filename(url_filename)
 
             # Create structured filename
-            timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%d")
+            timestamp_str = datetime.now(UTC).strftime("%Y%m%d")
             filename = f"{organization_slug}_{timestamp_str}_{sanitized_filename}"
             if not filename.endswith(".pdf"):
                 filename += ".pdf"
@@ -108,7 +107,7 @@ class PDFDownloader:
                 organization_name=None,  # TODO: Extract from HTML metadata
                 organization_slug=organization_slug,
                 reporting_period=None,  # TODO: Extract from filename or HTML
-                download_timestamp=datetime.now(timezone.utc),
+                download_timestamp=datetime.now(UTC),
                 website_id=website_id,
                 http_status_code=http_status,
                 http_headers={
@@ -136,7 +135,7 @@ class PDFDownloader:
         website_id: str,
         organization_slug: str = "unknown",
         max_retries: int = 3,
-    ) -> tuple[Optional[bytes], Optional[DownloadedPDF], Optional[str]]:
+    ) -> tuple[bytes | None, DownloadedPDF | None, str | None]:
         """Download PDF with retry logic.
 
         Args:
@@ -148,7 +147,7 @@ class PDFDownloader:
         Returns:
             Tuple of (PDF content or None, metadata or None, error message or None)
         """
-        last_error: Optional[str] = None
+        last_error: str | None = None
 
         for attempt in range(max_retries):
             try:
@@ -174,7 +173,7 @@ class PDFDownloader:
             organization_name=None,
             organization_slug=organization_slug,
             reporting_period=None,
-            download_timestamp=datetime.now(timezone.utc),
+            download_timestamp=datetime.now(UTC),
             website_id=website_id,
             http_status_code=0,
             http_headers={},
