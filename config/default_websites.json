@@ -1,0 +1,304 @@
+{
+  "version": "1.0",
+  "websites": [
+    {
+      "id": "miac-national",
+      "name": "Ministry of Internal Affairs and Communications",
+      "base_url": "https://www.soumu.go.jp/senkyo/seiji_s/",
+      "description": "National political finance disclosure site",
+      "crawl_frequency": "monthly",
+      "enabled": true
+    },
+    {
+      "id": "ndl-national",
+      "name": "National Diet Library",
+      "base_url": "https://www.ndl.go.jp/",
+      "description": "National library with political finance archives",
+      "crawl_frequency": "quarterly",
+      "enabled": true
+    },
+    {
+      "id": "hokkaido-prefecture",
+      "name": "Hokkaido Prefecture Political Finance",
+      "base_url": "https://www.pref.hokkaido.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "aomori-prefecture",
+      "name": "Aomori Prefecture Political Finance",
+      "base_url": "https://www.pref.aomori.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "iwate-prefecture",
+      "name": "Iwate Prefecture Political Finance",
+      "base_url": "https://www.pref.iwate.jp/",
+      "enabled": true
+    },
+    {
+      "id": "miyagi-prefecture",
+      "name": "Miyagi Prefecture Political Finance",
+      "base_url": "https://www.pref.miyagi.jp/",
+      "enabled": true
+    },
+    {
+      "id": "akita-prefecture",
+      "name": "Akita Prefecture Political Finance",
+      "base_url": "https://www.pref.akita.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "yamagata-prefecture",
+      "name": "Yamagata Prefecture Political Finance",
+      "base_url": "https://www.pref.yamagata.jp/",
+      "enabled": true
+    },
+    {
+      "id": "fukushima-prefecture",
+      "name": "Fukushima Prefecture Political Finance",
+      "base_url": "https://www.pref.fukushima.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "ibaraki-prefecture",
+      "name": "Ibaraki Prefecture Political Finance",
+      "base_url": "https://www.pref.ibaraki.jp/",
+      "enabled": true
+    },
+    {
+      "id": "tochigi-prefecture",
+      "name": "Tochigi Prefecture Political Finance",
+      "base_url": "https://www.pref.tochigi.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "gunma-prefecture",
+      "name": "Gunma Prefecture Political Finance",
+      "base_url": "https://www.pref.gunma.jp/",
+      "enabled": true
+    },
+    {
+      "id": "saitama-prefecture",
+      "name": "Saitama Prefecture Political Finance",
+      "base_url": "https://www.pref.saitama.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "chiba-prefecture",
+      "name": "Chiba Prefecture Political Finance",
+      "base_url": "https://www.pref.chiba.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "tokyo-prefecture",
+      "name": "Tokyo Prefecture Political Finance",
+      "base_url": "https://www.senkyo.metro.tokyo.lg.jp/",
+      "description": "Tokyo metropolitan area political finance disclosure",
+      "enabled": true
+    },
+    {
+      "id": "kanagawa-prefecture",
+      "name": "Kanagawa Prefecture Political Finance",
+      "base_url": "https://www.pref.kanagawa.jp/",
+      "enabled": true
+    },
+    {
+      "id": "niigata-prefecture",
+      "name": "Niigata Prefecture Political Finance",
+      "base_url": "https://www.pref.niigata.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "toyama-prefecture",
+      "name": "Toyama Prefecture Political Finance",
+      "base_url": "https://www.pref.toyama.jp/",
+      "enabled": true
+    },
+    {
+      "id": "ishikawa-prefecture",
+      "name": "Ishikawa Prefecture Political Finance",
+      "base_url": "https://www.pref.ishikawa.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "fukui-prefecture",
+      "name": "Fukui Prefecture Political Finance",
+      "base_url": "https://www.pref.fukui.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "yamanashi-prefecture",
+      "name": "Yamanashi Prefecture Political Finance",
+      "base_url": "https://www.pref.yamanashi.jp/",
+      "enabled": true
+    },
+    {
+      "id": "nagano-prefecture",
+      "name": "Nagano Prefecture Political Finance",
+      "base_url": "https://www.pref.nagano.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "gifu-prefecture",
+      "name": "Gifu Prefecture Political Finance",
+      "base_url": "https://www.pref.gifu.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "shizuoka-prefecture",
+      "name": "Shizuoka Prefecture Political Finance",
+      "base_url": "https://www.pref.shizuoka.jp/",
+      "enabled": true
+    },
+    {
+      "id": "aichi-prefecture",
+      "name": "Aichi Prefecture Political Finance",
+      "base_url": "https://www.pref.aichi.jp/",
+      "enabled": true
+    },
+    {
+      "id": "mie-prefecture",
+      "name": "Mie Prefecture Political Finance",
+      "base_url": "https://www.pref.mie.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "shiga-prefecture",
+      "name": "Shiga Prefecture Political Finance",
+      "base_url": "https://www.pref.shiga.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "kyoto-prefecture",
+      "name": "Kyoto Prefecture Political Finance",
+      "base_url": "https://www.pref.kyoto.jp/",
+      "enabled": true
+    },
+    {
+      "id": "osaka-prefecture",
+      "name": "Osaka Prefecture Political Finance",
+      "base_url": "https://www.pref.osaka.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "hyogo-prefecture",
+      "name": "Hyogo Prefecture Political Finance",
+      "base_url": "https://www.pref.hyogo.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "nara-prefecture",
+      "name": "Nara Prefecture Political Finance",
+      "base_url": "https://www.pref.nara.jp/",
+      "enabled": true
+    },
+    {
+      "id": "wakayama-prefecture",
+      "name": "Wakayama Prefecture Political Finance",
+      "base_url": "https://www.pref.wakayama.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "tottori-prefecture",
+      "name": "Tottori Prefecture Political Finance",
+      "base_url": "https://www.pref.tottori.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "shimane-prefecture",
+      "name": "Shimane Prefecture Political Finance",
+      "base_url": "https://www.pref.shimane.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "okayama-prefecture",
+      "name": "Okayama Prefecture Political Finance",
+      "base_url": "https://www.pref.okayama.jp/",
+      "enabled": true
+    },
+    {
+      "id": "hiroshima-prefecture",
+      "name": "Hiroshima Prefecture Political Finance",
+      "base_url": "https://www.pref.hiroshima.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "yamaguchi-prefecture",
+      "name": "Yamaguchi Prefecture Political Finance",
+      "base_url": "https://www.pref.yamaguchi.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "tokushima-prefecture",
+      "name": "Tokushima Prefecture Political Finance",
+      "base_url": "https://www.pref.tokushima.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "kagawa-prefecture",
+      "name": "Kagawa Prefecture Political Finance",
+      "base_url": "https://www.pref.kagawa.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "ehime-prefecture",
+      "name": "Ehime Prefecture Political Finance",
+      "base_url": "https://www.pref.ehime.jp/",
+      "enabled": true
+    },
+    {
+      "id": "kochi-prefecture",
+      "name": "Kochi Prefecture Political Finance",
+      "base_url": "https://www.pref.kochi.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "fukuoka-prefecture",
+      "name": "Fukuoka Prefecture Political Finance",
+      "base_url": "https://www.pref.fukuoka.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "saga-prefecture",
+      "name": "Saga Prefecture Political Finance",
+      "base_url": "https://www.pref.saga.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "nagasaki-prefecture",
+      "name": "Nagasaki Prefecture Political Finance",
+      "base_url": "https://www.pref.nagasaki.jp/",
+      "enabled": true
+    },
+    {
+      "id": "kumamoto-prefecture",
+      "name": "Kumamoto Prefecture Political Finance",
+      "base_url": "https://www.pref.kumamoto.jp/",
+      "enabled": true
+    },
+    {
+      "id": "oita-prefecture",
+      "name": "Oita Prefecture Political Finance",
+      "base_url": "https://www.pref.oita.jp/",
+      "enabled": true
+    },
+    {
+      "id": "miyazaki-prefecture",
+      "name": "Miyazaki Prefecture Political Finance",
+      "base_url": "https://www.pref.miyazaki.lg.jp/",
+      "enabled": true
+    },
+    {
+      "id": "kagoshima-prefecture",
+      "name": "Kagoshima Prefecture Political Finance",
+      "base_url": "https://www.pref.kagoshima.jp/",
+      "enabled": true
+    },
+    {
+      "id": "okinawa-prefecture",
+      "name": "Okinawa Prefecture Political Finance",
+      "base_url": "https://www.pref.okinawa.jp/",
+      "enabled": true
+    }
+  ]
+}
