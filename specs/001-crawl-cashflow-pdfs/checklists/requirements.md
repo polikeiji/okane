@@ -34,4 +34,8 @@
 
 - All validation items passed on 2026-01-19
 - User clarifications incorporated (Q1: B, Q2: C, Q3: C)
+- Added FR-018: max-files parameter to limit total number of downloaded PDFs (2026-01-19)
+- Added User Story 5 (formerly 4): Limited File Crawling for Testing (Priority: P3)
+- Added SC-009: Success criteria for max-files limit behavior
+- Added edge cases for max-files parameter validation
 - Specification is ready for `/speckit.plan` phase
